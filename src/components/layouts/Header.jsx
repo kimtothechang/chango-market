@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import IconButton from '../IconButton';
 import { BASIC_PAGE_WIDTH } from '../../constants';
 
-const Header = () => {
+const Header = ({ lefticon, righticon }) => {
   const navigate = useNavigate();
   return (
     <HeaderWrapper>
@@ -16,8 +16,8 @@ const Header = () => {
           <SearchInput type="text" value="" placeholder="상품을 검색해보세요" />
         </Row>
         <Row>
-          <IconButton text="장바구니" src={`${process.env.PUBLIC_URL}/assets/icon-shopping-cart.svg`} />
-          <IconButton onClick={() => navigate('/login')} text="로그인" src={`${process.env.PUBLIC_URL}/assets/icon-user.svg`} />
+          {lefticon}
+          {righticon}
         </Row>
       </MyHeader>
     </HeaderWrapper>
