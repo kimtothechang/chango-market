@@ -1,7 +1,6 @@
 import { useState, memo } from 'react';
 import styled from '@emotion/styled';
 import { BASIC_SERVER_URL } from '../../constants';
-import { useEffect } from 'react';
 import { useCallback } from 'react';
 
 const ERROR_MESSAGE = {

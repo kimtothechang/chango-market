@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
+// import { useState } from 'react';
 import ItemCard from './ItemCard';
 import { BASIC_PAGE_WIDTH } from '../../constants';
 import { useEffect } from 'react';
@@ -43,12 +43,12 @@ const dummyItemList = [
 ];
 
 const ItemList = () => {
-  const [data, setData] = useState();
+  // const [data, setData] = useState();
 
   const getData = async () => {
-    const url = 'http://13.209.150.154:8888/products/';
-    const res = await fetch(url).then((res) => res.json());
-    console.log(res);
+    // const url = 'http://13.209.150.154:8888/products/';
+    // const res = await fetch(url).then((res) => res.json());
+    // console.log(res);
   };
 
   useEffect(() => {

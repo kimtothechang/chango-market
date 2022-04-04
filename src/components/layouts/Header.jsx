@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import IconButton from '../IconButton';
 import { BASIC_PAGE_WIDTH } from '../../constants';
 
 const Header = ({ lefticon, righticon }) => {
