@@ -3,13 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { BASIC_PAGE_WIDTH } from '../../constants';
 
+const areEqual = (prevProps, nextProps) => {
+  return prevProps.children[0].props.text === nextProps.children[0].props.text;
+};
+
 const Header = ({ lefticon, righticon }) => {
   const [searchValue, setSearchValue] = useState('');
   const navigate = useNavigate();
 
   const goHome = useCallback(() => {
     navigate('/');
-  }, []);
+  }, [navigate]);
 
   const onChangeSearch = useCallback((e) => {
     setSearchValue(e.target.value);
@@ -58,14 +62,17 @@ const Row = styled.div`
   }
 `;
 
-const IconWrapper = styled.div`
-  display: flex;
-  align-items: center;
+const IconWrapper = memo(
+  styled.div`
+    display: flex;
+    align-items: center;
 
-  & > button {
-    cursor: pointer;
-  }
-`;
+    & > button {
+      cursor: pointer;
+    }
+  `,
+  areEqual
+);
 
 const Logo = memo(styled.a`
   display: flex;

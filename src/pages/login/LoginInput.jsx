@@ -2,6 +2,7 @@ import { useState, memo } from 'react';
 import styled from '@emotion/styled';
 import { BASIC_SERVER_URL } from '../../constants';
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ERROR_MESSAGE = {
   id: '아이디를 입력해주세요.',
@@ -13,6 +14,7 @@ const LoginInput = ({ logintype }) => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   const onChangeID = useCallback((e) => {
     setId(e.target.value);
@@ -61,6 +63,9 @@ const LoginInput = ({ logintype }) => {
       setErrorMessage('fail');
     } else {
       setErrorMessage('');
+      localStorage.setItem('id', id);
+      localStorage.setItem('token', data.token);
+      navigate('/');
     }
   };
 
