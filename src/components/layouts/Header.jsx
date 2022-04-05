@@ -1,23 +1,33 @@
-import React from 'react';
+import { useState, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { BASIC_PAGE_WIDTH } from '../../constants';
 
 const Header = ({ lefticon, righticon }) => {
+  const [searchValue, setSearchValue] = useState('');
   const navigate = useNavigate();
+
+  const goHome = useCallback(() => {
+    navigate('/');
+  }, []);
+
+  const onChangeSearch = useCallback((e) => {
+    setSearchValue(e.target.value);
+  }, []);
+
   return (
     <HeaderWrapper>
       <MyHeader>
         <Row>
           <h1>
-            <Logo onClick={() => navigate('/')} />
+            <Logo onClick={goHome} />
           </h1>
-          <SearchInput type="text" value="" placeholder="상품을 검색해보세요" />
+          <SearchInput type="text" value={searchValue} placeholder="상품을 검색해보세요" onChange={onChangeSearch} />
         </Row>
-        <Row>
+        <IconWrapper>
           {lefticon}
           {righticon}
-        </Row>
+        </IconWrapper>
       </MyHeader>
     </HeaderWrapper>
   );
@@ -48,22 +58,30 @@ const Row = styled.div`
   }
 `;
 
-const Logo = styled.a`
+const IconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+
+  & > button {
+    cursor: pointer;
+  }
+`;
+
+const Logo = memo(styled.a`
   display: flex;
   align-items: center;
   margin-right: 30px;
 
   &:after {
-    display: inline-block;
     content: '';
     width: 124px;
     height: 38px;
     background-image: url('../../img/logo.png');
     background-repeat: no-repeat;
   }
-`;
+`);
 
-const SearchInput = styled.input`
+const SearchInput = memo(styled.input`
   text-indent: 22px;
   padding: 13px 0px;
   box-sizing: border-box;
@@ -77,4 +95,4 @@ const SearchInput = styled.input`
     font-size: 16px;
     font-weight: 400;
   }
-`;
+`);
