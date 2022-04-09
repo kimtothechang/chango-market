@@ -2,7 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 
-const LoginLogo = () => {
+const SignLogo = () => {
   const navigate = useNavigate();
 
   return (
@@ -12,7 +12,7 @@ const LoginLogo = () => {
   );
 };
 
-export default React.memo(LoginLogo);
+export default React.memo(SignLogo);
 
 const LogoImg = styled.img`
   margin-top: 100px;

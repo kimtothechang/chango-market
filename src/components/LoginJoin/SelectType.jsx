@@ -1,15 +1,28 @@
 import styled from '@emotion/styled';
 
-const LoginCategory = ({ logintype, onClick }) => {
+import { useRecoilState } from 'recoil';
+import { joinTypeState } from '../../Atom';
+
+const SelectType = ({ leftText, rightText }) => {
+  const [joinType, setJoinType] = useRecoilState(joinTypeState);
+
+  const handleJoinType = () => {
+    if (joinType === 'BUYER') {
+      setJoinType('SELLER');
+    } else {
+      setJoinType('BUYER');
+    }
+  };
+
   return (
-    <CategoryWrapper whichUser={logintype}>
-      <LoginWho onClick={() => onClick()}>구매회원 로그인</LoginWho>
-      <LoginWho onClick={() => onClick()}>판매회원 로그인</LoginWho>
+    <CategoryWrapper whichUser={joinType}>
+      <LoginWho onClick={handleJoinType}>{leftText}</LoginWho>
+      <LoginWho onClick={handleJoinType}>{rightText}</LoginWho>
     </CategoryWrapper>
   );
 };
 
-export default LoginCategory;
+export default SelectType;
 
 const CategoryWrapper = styled.div`
   display: flex;
