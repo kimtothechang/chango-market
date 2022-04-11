@@ -1,14 +1,29 @@
 import { useState, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+
+import { useRecoilValue } from 'recoil';
+import { myPageToggle } from '../../Atom';
+
 import { BASIC_PAGE_WIDTH } from '../../constants';
 
-const areEqual = (prevProps, nextProps) => {
+const rowAreEqual = (prevProps, nextProps) => {
+  return prevProps.children[1].props.value === nextProps.children[1].props.value;
+};
+
+const iconsAreEqual = (prevProps, nextProps) => {
   return prevProps.children[0].props.text === nextProps.children[0].props.text;
+};
+
+const isToggleEqual = (prevProps, nextProps) => {
+  return prevProps.children[2].props.toggle === nextProps.children[2].props.toggle;
 };
 
 const Header = ({ lefticon, righticon }) => {
   const [searchValue, setSearchValue] = useState('');
+
+  const toggle = useRecoilValue(myPageToggle);
+
   const navigate = useNavigate();
 
   const goHome = useCallback(() => {
@@ -19,6 +34,11 @@ const Header = ({ lefticon, righticon }) => {
     setSearchValue(e.target.value);
   }, []);
 
+  const LogOut = () => {
+    localStorage.clear();
+    window.location.reload();
+  };
+
   return (
     <HeaderWrapper>
       <MyHeader>
@@ -28,16 +48,59 @@ const Header = ({ lefticon, righticon }) => {
           </h1>
           <SearchInput type="text" value={searchValue} placeholder="상품을 검색해보세요" onChange={onChangeSearch} />
         </Row>
-        <IconWrapper>
-          {lefticon}
-          {righticon}
-        </IconWrapper>
+        {localStorage.getItem('token') ? (
+          <MyPageWrapper>
+            {lefticon}
+            {righticon}
+            <MyPage toggle={toggle}>
+              <p>마이페이지</p>
+              <p onClick={LogOut}>로그아웃</p>
+            </MyPage>
+          </MyPageWrapper>
+        ) : (
+          <IconWrapper>
+            {lefticon}
+            {righticon}
+          </IconWrapper>
+        )}
       </MyHeader>
     </HeaderWrapper>
   );
 };
 
 export default Header;
+
+const MyPage = styled.div`
+  position: absolute;
+  right: -32.5px;
+  bottom: -100px;
+  display: ${(props) => (props.toggle ? 'flex' : 'none')};
+  box-shadow: 5px 4px 5px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  width: 130px;
+  border-radius: 10px;
+  flex-direction: column;
+  text-align: center;
+  padding: 10px;
+  z-index: 10;
+  font-size: 16px;
+  font-weight: 500;
+
+  & > p:first-of-type {
+    margin-bottom: 8px;
+  }
+
+  & > p {
+    cursor: pointer;
+    width: 110px;
+    padding: 10px;
+    border-radius: 5px;
+  }
+
+  & > p:hover {
+    border: 1px solid #767676;
+  }
+`;
 
 const HeaderWrapper = styled.div`
   width: 100%;
@@ -53,16 +116,7 @@ const MyHeader = styled.header`
   height: 90px;
 `;
 
-const Row = styled.div`
-  display: flex;
-  align-items: center;
-
-  & > button {
-    cursor: pointer;
-  }
-`;
-
-const IconWrapper = memo(
+const Row = memo(
   styled.div`
     display: flex;
     align-items: center;
@@ -71,7 +125,33 @@ const IconWrapper = memo(
       cursor: pointer;
     }
   `,
-  areEqual
+  rowAreEqual
+);
+
+const IconWrapper = memo(
+  styled.div`
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    & > button {
+      cursor: pointer;
+    }
+  `,
+  iconsAreEqual
+);
+
+const MyPageWrapper = memo(
+  styled.div`
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    & > button {
+      cursor: pointer;
+    }
+  `,
+  isToggleEqual
 );
 
 const Logo = memo(styled.a`
@@ -99,7 +179,7 @@ const SearchInput = memo(styled.input`
 
   &::placeholder {
     color: #767676;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 400;
   }
 `);
