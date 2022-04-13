@@ -1,5 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
+import './reset.css';
+
 import { RecoilRoot } from 'recoil';
 
 import Home from './pages/home/Home.jsx';
