@@ -9,13 +9,21 @@ const dummyBannerImg = [
     id: 0,
     src: `${process.env.PUBLIC_URL}/assets/banner/coding.png`,
     alt: '배너이미지',
-    pixel: 0,
   },
   {
     id: 1,
-    src: `${process.env.PUBLIC_URL}/assets/banner/guitar.png`,
+    src: `${process.env.PUBLIC_URL}/assets/banner/allhappy.jpeg`,
     alt: '배너이미지',
-    pixel: -parseInt(BASIC_PAGE_WIDTH, 10),
+  },
+  {
+    id: 2,
+    src: `${process.env.PUBLIC_URL}/assets/banner/snowman.jpeg`,
+    alt: '배너이미지',
+  },
+  {
+    id: 3,
+    src: `${process.env.PUBLIC_URL}/assets/banner/texasgang.jpeg`,
+    alt: '배너이미지',
   },
 ];
 
@@ -25,7 +33,7 @@ const Banner = () => {
   const [activeImg, setActiveImg] = useState(1);
 
   const moveCaroucel = (move) => {
-    setCaroucel(move.pixel);
+    setCaroucel(move.id);
     setActiveImg(move.id + 1);
   };
 
@@ -51,16 +59,17 @@ const MyBanner = styled.section`
   position: relative;
   margin: 0 auto;
   display: flex;
-  width: ${BASIC_PAGE_WIDTH};
-  height: 495px;
+  max-width: ${BASIC_PAGE_WIDTH};
+  max-height: 495px;
   background-color: #f2f2f2;
   overflow: hidden;
 `;
 
 const ImgWrapper = styled.div`
+  width: 100%;
   display: flex;
   transition: all 1s;
-  transform: ${(props) => `translateX(${props.howMove}px)` || 'translateX(0px)'};
+  transform: ${(props) => `translateX(calc(-${props.howMove} * 100%))`};
 `;
 
 const ButtonWrapper = styled.div`
