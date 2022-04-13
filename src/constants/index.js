@@ -2,7 +2,7 @@
 const BASIC_PAGE_WIDTH = `1280px`;
 
 // API 호출 URL
-const BASIC_SERVER_URL = 'http://13.209.150.154:8000';
+const BASIC_SERVER_URL = 'https://openmarket.weniv.co.kr';
 
 // 로그인 유효성 검사 실패 시 문구
 const ERROR_MESSAGE = {
@@ -18,7 +18,7 @@ const regxObj = {
   pwCheck: /^(?=.*[a-zA-z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/,
   name: /[a-zA-z0-9가-힣]/,
   phone: /[0-9]{10,11}$/,
-  email: /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i,
+  email: /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
 };
 
 export { BASIC_PAGE_WIDTH, BASIC_SERVER_URL, ERROR_MESSAGE, regxObj };
