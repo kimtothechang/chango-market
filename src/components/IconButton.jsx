@@ -29,5 +29,6 @@ const Button = styled.button`
     color: #767676;
     font-size: 12px;
     font-weight: 400;
+    white-space: nowrap;
   }
 `;
