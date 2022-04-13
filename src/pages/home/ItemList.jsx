@@ -57,9 +57,11 @@ const ItemList = () => {
 
   return (
     <ItemListWrapper>
-      {dummyItemList.map((item) => (
-        <ItemCard key={item.id} img={item.img} alt={item.product} seller={item.seller} product={item.product} price={item.price} />
-      ))}
+      <FlexBox>
+        {dummyItemList.map((item) => (
+          <ItemCard key={item.id} img={item.img} alt={item.product} seller={item.seller} product={item.product} price={item.price} />
+        ))}
+      </FlexBox>
     </ItemListWrapper>
   );
 };
@@ -68,11 +70,14 @@ export default ItemList;
 
 const ItemListWrapper = styled.article`
   margin: 0px auto;
-  width: ${BASIC_PAGE_WIDTH};
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  row-gap: 78px;
-  column-gap: 70px;
   margin-top: 80px;
   margin-bottom: 180px;
+  max-width: ${BASIC_PAGE_WIDTH};
+  padding: 16px;
+`;
+
+const FlexBox = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 80px;
 `;

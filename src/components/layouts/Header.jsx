@@ -111,9 +111,9 @@ const MyHeader = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0px auto;
-  width: ${BASIC_PAGE_WIDTH};
+  max-width: ${BASIC_PAGE_WIDTH};
   height: 90px;
+  margin: 0px auto;
 `;
 
 const Row = memo(
@@ -169,10 +169,10 @@ const Logo = memo(styled.a`
 `);
 
 const SearchInput = memo(styled.input`
+  min-width: 200px;
   text-indent: 22px;
   padding: 13px 0px;
   box-sizing: border-box;
-  width: 400px;
   height: 46px;
   border: 2px solid #21bf48;
   border-radius: 50px;

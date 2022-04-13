@@ -20,14 +20,30 @@ const ItemCard = ({ img, alt, seller, product, price }) => {
 
 export default ItemCard;
 
-const CardWrapper = styled.div``;
+const CardWrapper = styled.div`
+  flex-basis: 300px;
+  flex-grow: 1;
+  max-width: 29%;
 
-const ProductImg = styled.img`
-  width: 380px;
-  height: 380px;
+  @media screen and (max-width: 1095px) {
+    max-width: 46%;
+  }
+
+  @media screen and (max-width: 715px) {
+    max-width: 100%;
+  }
+`;
+
+const ProductImg = styled.div`
+  flex-grow: 1;
+  min-height: 300px;
   margin-bottom: 16px;
   border: 1px solid #c4c4c4;
   border-radius: 10px;
+  background-image: ${(props) => `url(${props.src})`};
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
 `;
 
 const ProductSeller = styled.p`
