@@ -1,3 +1,5 @@
+import styled from '@emotion/styled';
+import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
 import { useRecoilState } from 'recoil';
@@ -7,8 +9,6 @@ import ItemList from './ItemList';
 import IconButton from '../../components/IconButton';
 import Banner from './Banner';
 import Header from '../../components/layouts/Header';
-import { useCallback } from 'react';
-import { useEffect } from 'react';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -43,3 +43,8 @@ const Home = () => {
 };
 
 export default Home;
+
+const HomeWrapper = styled.main`
+  margin: 0px;
+  padding: 0px;
+`;

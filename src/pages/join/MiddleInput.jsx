@@ -1,3 +1,5 @@
+import styled from '@emotion/styled';
+
 import { memo } from 'react';
 
 const ValueEqual = (prevProps, nextProps) => {
@@ -6,10 +8,14 @@ const ValueEqual = (prevProps, nextProps) => {
 
 const MiddleInput = ({ type, value, onChange }) => {
   return (
-    <div>
+    <InputWrapper>
       <input type={type} value={value} onChange={onChange} />
-    </div>
+    </InputWrapper>
   );
 };
 
 export default memo(MiddleInput, ValueEqual);
+
+const InputWrapper = styled.div`
+  margin-bottom: 16px;
+`;

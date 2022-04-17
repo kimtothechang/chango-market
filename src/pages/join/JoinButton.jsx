@@ -11,69 +11,59 @@ const JoinButton = () => {
   const joinInfo = useRecoilValue(joinState);
   const joinType = useRecoilValue(joinTypeState);
   const [joinValid, setJoinValid] = useRecoilState(joinValidState);
-  const [infoForCheck, setInfoForCheck] = useState({});
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setInfoForCheck({
-      id: joinInfo.id,
-      pw: joinInfo.pw,
-      pwCheck: joinInfo.pwCheck,
-      phone: joinInfo.phone1 + joinInfo.phone2 + joinInfo.phone3,
-      email: joinInfo.email1 + '@' + joinInfo.email2,
-    });
-  }, [joinInfo]);
-
-  // 1. 아이디 중복 검사
-  // 2. 휴대폰 번호 중복 검사
-  // 3. 유효성 검사
-  // 4. API 호출
-
-  // {username: ['해당 사용자 아이디는 이미 존재합니다.']}
-  // {phone_number: ["해당 사용자 전화번호는 이미 존재합니다."]}
-
-  const validCheck = () => {
-    for (let x in joinValid) {
-      if (joinValid[x] === false) {
-        return false;
+  const validCheck = (type) => {
+    if (type === 'BUYER') {
+      for (let x in joinValid) {
+        if (x !== 'company' && x !== 'store' && x !== 'companyCheck') {
+          if (joinValid[x] === false) {
+            return false;
+          }
+        }
+      }
+    } else {
+      for (let x in joinValid) {
+        if (joinValid[x] === false) {
+          return false;
+        }
       }
     }
     return true;
   };
 
-  const signUp = async () => {
-    const url = BASIC_SERVER_URL;
-    const res = await fetch(`${url}/accounts/signup/`, {
+  const signUp = async (type) => {
+    const API_TYPE = {
+      BUYER: 'signup/',
+      SELEER: 'signup_seller/',
+    };
+
+    const sendingData = {
+      username: joinInfo.id,
+      password: joinInfo.pw,
+      password2: joinInfo.pwCheck,
+      phone_number: joinInfo.phone1 + joinInfo.phone2 + joinInfo.phone3,
+      name: joinInfo.name,
+    };
+
+    if (type === 'SELLER') {
+      sendingData.company_registration_number = joinInfo.company.split('-').join('');
+      sendingData.store_name = joinInfo.store;
+    }
+
+    const res = await fetch(`${BASIC_SERVER_URL}/accounts/${API_TYPE[type]}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        username: joinInfo.id,
-        password: joinInfo.pw,
-        password2: joinInfo.pwCheck,
-        phone_number: joinInfo.phone1 + joinInfo.phone2 + joinInfo.phone3,
-        name: joinInfo.name,
-      }),
+      body: JSON.stringify(...sendingData),
     });
-    const data = await res.json();
-    console.log(data);
 
-    if (data.phone_number.length === 1) {
-      alert(data.phone_number[0]);
-    } else if (data.username.length === 1) {
-      setJoinValid((current) => {
-        return { ...current, idCheck: false };
-      });
-      alert(data.username[0]);
-    } else {
-      alert('회원 가입에 성공하였습니다.\n 로그인 후 이용해주세요.');
-      navigate('/login');
-    }
+    const data = await res.json();
   };
   return (
     <div>
-      <Button onClick={signUp} disabled={!validCheck()} activated={!validCheck()}>
+      <Button onClick={() => signUp(joinType)} disabled={!validCheck(joinType)} activated={!validCheck(joinType)}>
         가입하기
       </Button>
     </div>

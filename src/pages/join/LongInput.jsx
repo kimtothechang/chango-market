@@ -4,18 +4,18 @@ import { useRecoilValue } from 'recoil';
 import { joinValidState } from '../../Atom';
 
 const ValueEqual = (prevProps, nextProps) => {
-  if (prevProps.value === nextProps.value) return true;
+  console.log(prevProps.value, nextProps.value);
+  return prevProps.value === nextProps.value;
 };
 
-const LongInput = ({ title, type, value, onChange, character, onBlur, remark, onClick }) => {
+const LongInput = ({ type, value, onChange, character, buttonTitle, onClick, max }) => {
   const joinValid = useRecoilValue(joinValidState);
 
   return (
     <LongInputWrapper>
-      <p>{title}</p>
       <InputWrapper>
-        <Input type={type} value={value} onChange={onChange} character={character} onBlur={onBlur} />
-        {character === 'id' ? <button onClick={onClick}>중복 확인</button> : ''}
+        <Input type={type} value={value} onChange={onChange} character={character} maxLength={parseInt(max, 10)} />
+        {character === 'id' ? <button onClick={onClick}>{buttonTitle}</button> : ''}
         {character === 'pw' || character === 'pwCheck' ? (
           <Check pwValid={joinValid[character]}>
             <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -34,10 +34,14 @@ export default memo(LongInput, ValueEqual);
 
 LongInput.defaultProps = {
   character: '',
+  max: 20,
 };
 
 const LongInputWrapper = styled.div`
+  margin-bottom: 16px;
+
   & > p {
+    margin-bottom: 8px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
 `;

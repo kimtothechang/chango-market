@@ -33,6 +33,8 @@ export const joinState = atom({
     email: '',
     email1: '',
     email2: '',
+    company: '',
+    store: '',
   },
 });
 
@@ -46,6 +48,43 @@ export const joinValidState = atom({
     name: false,
     phone: false,
     email: false,
+    company: false,
+    companyCheck: false,
+    store: false,
+  },
+});
+
+export const joinSellerState = atom({
+  key: 'joinSellerState',
+  dafualt: {
+    id: '',
+    pw: '',
+    pwCheck: '',
+    name: '',
+    phone: '',
+    phone1: '',
+    phone2: '',
+    phone3: '',
+    email: '',
+    email1: '',
+    email2: '',
+    companyNumber: '',
+    store: '',
+  },
+});
+
+export const joinSellerValidState = atom({
+  key: 'joinSellerValidState',
+  default: {
+    id: false,
+    idCheck: false,
+    pw: false,
+    pwCheck: false,
+    name: false,
+    phone: false,
+    email: false,
+    compnayNumber: false,
+    store: false,
   },
 });
 

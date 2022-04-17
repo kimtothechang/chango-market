@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useEffect } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { joinTypeState } from '../../Atom';
@@ -14,10 +15,14 @@ const SelectType = ({ leftText, rightText }) => {
     }
   };
 
+  useEffect(() => {
+    console.log(joinType);
+  }, [joinType]);
+
   return (
     <CategoryWrapper whichUser={joinType}>
-      <LoginWho onClick={handleJoinType}>{leftText}</LoginWho>
-      <LoginWho onClick={handleJoinType}>{rightText}</LoginWho>
+      <LoginWho onClick={() => handleJoinType()}>{leftText}</LoginWho>
+      <LoginWho onClick={() => handleJoinType()}>{rightText}</LoginWho>
     </CategoryWrapper>
   );
 };

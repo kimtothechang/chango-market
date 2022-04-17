@@ -1,3 +1,5 @@
+import styled from '@emotion/styled';
+
 import { memo } from 'react';
 
 const ValueEqual = (prevProps, nextProps) => {
@@ -6,9 +8,9 @@ const ValueEqual = (prevProps, nextProps) => {
 
 const ShortInput = ({ refprops, type, value, onChange, character, max }) => {
   return (
-    <div>
+    <InputWrapper>
       <input ref={refprops} type={type} value={value} onChange={onChange} maxLength={max} />
-    </div>
+    </InputWrapper>
   );
 };
 
@@ -17,3 +19,7 @@ ShortInput.defaultProps = {
 };
 
 export default memo(ShortInput, ValueEqual);
+
+const InputWrapper = styled.div`
+  margin-bottom: 16px;
+`;

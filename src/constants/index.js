@@ -19,6 +19,9 @@ const regxObj = {
   name: /[a-zA-z0-9가-힣]/,
   phone: /[0-9]{10,11}$/,
   email: /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+  //company: /^[0-9]{10}$/,
+  company: /([0-9]{3})-?([0-9]{2})-?([0-9]{5})/,
+  store: /[a-zA-z0-9가-힣]/,
 };
 
 export { BASIC_PAGE_WIDTH, BASIC_SERVER_URL, ERROR_MESSAGE, regxObj };
