@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useEffect } from 'react';
+import { useEffect, memo } from 'react';
 
 import { useRecoilState } from 'recoil';
 import { joinTypeState } from '../../Atom';
@@ -7,27 +7,19 @@ import { joinTypeState } from '../../Atom';
 const SelectType = ({ leftText, rightText }) => {
   const [joinType, setJoinType] = useRecoilState(joinTypeState);
 
-  const handleJoinType = () => {
-    if (joinType === 'BUYER') {
-      setJoinType('SELLER');
-    } else {
-      setJoinType('BUYER');
-    }
+  const handleJoinType = (value) => {
+    setJoinType((current) => (current = value));
   };
-
-  useEffect(() => {
-    console.log(joinType);
-  }, [joinType]);
 
   return (
     <CategoryWrapper whichUser={joinType}>
-      <LoginWho onClick={() => handleJoinType()}>{leftText}</LoginWho>
-      <LoginWho onClick={() => handleJoinType()}>{rightText}</LoginWho>
+      <LoginWho onClick={() => handleJoinType('BUYER')}>{leftText}</LoginWho>
+      <LoginWho onClick={() => handleJoinType('SELLER')}>{rightText}</LoginWho>
     </CategoryWrapper>
   );
 };
 
-export default SelectType;
+export default memo(SelectType);
 
 const CategoryWrapper = styled.div`
   display: flex;
