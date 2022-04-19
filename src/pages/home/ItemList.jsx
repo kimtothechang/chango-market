@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
-// import { useState } from 'react';
+import { useState } from 'react';
 import ItemCard from './ItemCard';
-import { BASIC_PAGE_WIDTH } from '../../constants';
+import { BASIC_PAGE_WIDTH, BASIC_SERVER_URL } from '../../constants';
 import { useEffect } from 'react';
 
 const dummyItemList = [
@@ -43,12 +43,20 @@ const dummyItemList = [
 ];
 
 const ItemList = () => {
-  // const [data, setData] = useState();
+  const [data, setData] = useState([]);
 
   const getData = async () => {
-    // const url = 'http://13.209.150.154:8888/products/';
-    // const res = await fetch(url).then((res) => res.json());
-    // console.log(res);
+    const url = BASIC_SERVER_URL;
+    const res = await fetch(`${url}/products/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const products = await res.json();
+
+    console.log(products.results);
+    setData([...products.results]);
   };
 
   useEffect(() => {
@@ -58,8 +66,16 @@ const ItemList = () => {
   return (
     <ItemListWrapper>
       <FlexBox>
-        {dummyItemList.map((item) => (
-          <ItemCard key={item.id} img={item.img} alt={item.product} seller={item.seller} product={item.product} price={item.price} />
+        {data.map((item) => (
+          <ItemCard
+            key={item.product_id}
+            id={item.product_id}
+            img={item.image}
+            seller={item.seller_store}
+            product={item.product_name}
+            price={item.price}
+            alt={item.product_name}
+          />
         ))}
       </FlexBox>
     </ItemListWrapper>

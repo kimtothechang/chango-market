@@ -1,13 +1,16 @@
 import styled from '@emotion/styled';
+import { Link } from 'react-router-dom';
 
-const ItemCard = ({ img, alt, seller, product, price }) => {
+const ItemCard = ({ img, alt, seller, product, price, id }) => {
   const addComma = (num) => {
     return parseInt(num, 10).toLocaleString();
   };
 
   return (
     <CardWrapper>
-      <ProductImg src={img} alt={alt} />
+      <Link to={`/products/${id}`} id={id}>
+        <ProductImg src={img} alt={alt} />
+      </Link>
       <ProductSeller>{seller}</ProductSeller>
       <ProductTitle>{product}</ProductTitle>
       <ProductPrice>
@@ -33,6 +36,8 @@ const CardWrapper = styled.div`
     max-width: 100%;
   }
 `;
+
+const StyledLink = styled(Link)``;
 
 const ProductImg = styled.div`
   flex-grow: 1;
