@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { memo, useCallback, useRef } from 'react';
 
-import LongInput from './LongInput';
-import ShortInput from './ShortInput';
-import MiddleInput from './MiddleInput';
+import LongInput from './inputs/LongInput';
+import ShortInput from './inputs/ShortInput';
+import MiddleInput from './inputs/MiddleInput';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { joinState, joinValidState, joinTypeState } from '../../Atom';
@@ -11,6 +11,9 @@ import { useState, useEffect } from 'react';
 
 import { BASIC_SERVER_URL, regxObj } from '../../constants';
 import InputTitle from './InputTitle';
+import ButtonInput from './inputs/ButtonInput';
+import PwInput from './inputs/PwInput';
+import Warning from './Warning';
 
 // 리렌더링 방지
 const NumberEqual = (prevProps, nextProps) => {
@@ -39,7 +42,7 @@ const ERROR_MESSAGE = {
     ok: '사용 가능한 아이디입니다.',
   },
   company: {
-    valid: '올바른 형식으로 입력해주세요.(000-00-00000)',
+    valid: '10자의 숫자로 입력해주세요.',
     check: '인증을 해주세요.',
     same: '해당 사업자등록번호는 이미 존재합니다.',
     ok: '사용 가능한 번호입니다.',
@@ -54,9 +57,28 @@ const JoinForm = () => {
   const [errorCompany, setErrorCompany] = useState('');
   const [samePw, setSamePw] = useState('');
 
+  // 실시간 유효성 검사
+  const liveValidCheck = (type) => {
+    if (regxObj[type].test(joinInfo[type])) {
+      setJoinValid((current) => {
+        if (type === 'pwCheck') {
+          const bool = !!(joinInfo.pw === joinInfo.pwCheck);
+          return { ...current, [type]: bool };
+        } else {
+          return { ...current, [type]: true };
+        }
+      });
+    } else {
+      setJoinValid((current) => {
+        return { ...current, [type]: false };
+      });
+    }
+  };
+
   // 실시간 ID 유효성 검사 및 중복 확인 후 입력 바뀔 경우 초기화
   useEffect(() => {
     liveValidCheck('id');
+    // 사용 가능한 아이디거나 중복인 경우에 id값이 변경될 경우 오류 메세지 수정 및 idCheck값 false
     if (error === ERROR_MESSAGE.id.ok || error === ERROR_MESSAGE.id.same) {
       setError((current) => (current = ERROR_MESSAGE.id.check));
     }
@@ -75,34 +97,13 @@ const JoinForm = () => {
     });
   }, [joinValid.id]);
 
-  // 실시간 유효성 검사
-  const liveValidCheck = useCallback((type) => {
-    if (regxObj[type].test(joinInfo[type])) {
-      setJoinValid((current) => {
-        if (type === 'pwCheck') {
-          const bool = joinInfo.pw === joinInfo.pwCheck;
-          return { ...current, [type]: bool };
-        } else {
-          return { ...current, [type]: true };
-        }
-      });
-    } else {
-      setJoinValid((current) => {
-        return { ...current, [type]: false };
-      });
-    }
-  }, []);
-
   useEffect(() => {
     liveValidCheck('pw');
-  }, [joinInfo.pw]);
-
-  useEffect(() => {
     liveValidCheck('pwCheck');
-  }, [joinInfo.pwCheck]);
+  }, [joinInfo.pw, joinInfo.pwCheck]);
 
   // onChange
-  const onChangeJoin = useCallback((e, what) => {
+  const onChangeJoin = (e, what) => {
     setJoinInfo((current) => {
       return { ...current, [what]: e.target.value };
     });
@@ -115,7 +116,7 @@ const JoinForm = () => {
         return { ...current, name: false };
       });
     }
-  }, []);
+  };
 
   // phone 각 인풋을 이용한 실시간 업데이트
   useEffect(() => {
@@ -136,12 +137,12 @@ const JoinForm = () => {
   // 사업자 등록번호
   useEffect(() => {
     liveValidCheck('company');
-    if (errorCompany === ERROR_MESSAGE.company.ok) {
-      setErrorCompany(ERROR_MESSAGE.company.check);
-      setJoinValid((current) => {
-        return { ...current, company: false };
-      });
+    if (error === ERROR_MESSAGE.company.ok || error === ERROR_MESSAGE.company.same) {
+      setErrorCompany((current) => (current = ERROR_MESSAGE.company.check));
     }
+    setJoinValid((current) => {
+      return { ...current, companyCheck: false };
+    });
   }, [joinInfo.company]);
 
   // 스토어 이름 실시간 유효성 검사
@@ -166,10 +167,10 @@ const JoinForm = () => {
     };
     const sendingData = {
       username: joinInfo[type],
-      password: '1',
-      password2: '1',
-      phone_number: '1',
-      name: '1',
+      password: '1q2w3e4r',
+      password2: '1q2w3e4r',
+      phone_number: '01029101757',
+      name: 'chango',
     };
 
     if (type === 'company') {
@@ -188,7 +189,9 @@ const JoinForm = () => {
       }),
     });
 
-    const data = res.json();
+    const data = await res.json();
+
+    console.log(data);
 
     // ID 중복 검사일 경우
     if (type === 'id') {
@@ -220,7 +223,7 @@ const JoinForm = () => {
       });
 
       setJoinValid((current) => {
-        if (!!data.username) {
+        if (!!data.company_registration_number) {
           return { ...current, companyCheck: false };
         } else {
           return { ...current, companyCheck: true };
@@ -232,20 +235,24 @@ const JoinForm = () => {
   return (
     <Section>
       <InputTitle title="아이디" />
-      <LongInput
+      <ButtonInput
         type="text"
         value={joinInfo.id}
         onChange={(e) => onChangeJoin(e, 'id')}
-        character="id"
         onClick={() => checkValue('id')}
         buttonTitle="중복 확인"
+        max="20"
+        valid={joinValid.id}
       />
-      <Warning>{error}</Warning>
+      <Warning content={error} />
+
       <InputTitle title="비밀번호" />
-      <LongInput type="password" value={joinInfo.pw} onChange={(e) => onChangeJoin(e, 'pw')} character="pw" />
+      <PwInput type="password" value={joinInfo.pw} onChange={(e) => onChangeJoin(e, 'pw')} max="20" pwValid={joinValid.pw} />
+
       <InputTitle title="비밀번호 재확인" />
-      <LongInput type="password" value={joinInfo.pwCheck} onChange={(e) => onChangeJoin(e, 'pwCheck')} character="pwCheck" />
-      <Warning>{samePw}</Warning>
+      <PwInput type="password" value={joinInfo.pwCheck} onChange={(e) => onChangeJoin(e, 'pwCheck')} max="20" pwValid={joinValid.pwCheck} />
+      <Warning content={samePw} />
+
       <InputTitle title="이름" />
       <LongInput type="text" value={joinInfo.name} onChange={(e) => onChangeJoin(e, 'name')} />
 
@@ -265,22 +272,19 @@ const JoinForm = () => {
 
       {joinType === 'SELLER' ? (
         <div>
-          <CompanyWrapper>
-            <InputTitle title="사업자 등록번호" />
-            <LongInput
-              type="text"
-              value={joinInfo.company}
-              onChange={(e) => onChangeJoin(e, 'company')}
-              character="id"
-              onClick={() => checkValue('company')}
-              buttonTitle="인증"
-            />
-          </CompanyWrapper>
-          <Warning>{errorCompany}</Warning>
-          <StoreWrapper>
-            <InputTitle title="스토어 이름" />
-            <LongInput type="text" value={joinInfo.store} onChange={(e) => onChangeJoin(e, 'store')} max={10} />
-          </StoreWrapper>
+          <InputTitle title="사업자 등록번호" />
+          <ButtonInput
+            type="text"
+            value={joinInfo.company}
+            onChange={(e) => onChangeJoin(e, 'company')}
+            onClick={() => checkValue('company')}
+            buttonTitle="인증"
+            max="10"
+            valid={joinValid.company}
+          />
+          <Warning content={errorCompany} />
+          <InputTitle title="스토어 이름" />
+          <LongInput type="text" value={joinInfo.store} onChange={(e) => onChangeJoin(e, 'store')} max={10} />
         </div>
       ) : (
         ''
@@ -302,14 +306,17 @@ const Section = styled.section`
   border-top-right-radius: 0px;
 `;
 
-const Warning = styled.p`
-  color: green;
-  margin-bottom: 16px;
-`;
+const IdEqual = (prevProps, nextProps) => {
+  return prevProps.children[0].props.value === nextProps.children[0].props.value;
+};
 
-const PhoneEmail = styled.p`
-  margin-bottom: 8px;
-`;
+const PwEqual = (prevProps, nextProps) => {
+  return prevProps.children.props.value === nextProps.children.props.value;
+};
+
+const IdWrapper = memo(styled.div``, IdEqual);
+
+const PwCheckWrapper = memo(styled.div``, IdEqual);
 
 const NumberWrapper = memo(
   styled.div`
@@ -351,7 +358,3 @@ const EmailWrapper = memo(
   `,
   EmailEqual
 );
-
-const CompanyWrapper = styled.div``;
-
-const StoreWrapper = styled.div``;
