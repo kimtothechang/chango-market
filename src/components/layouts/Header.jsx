@@ -44,7 +44,7 @@ const Header = ({ lefticon, righticon }) => {
       <MyHeader>
         <Row>
           <h1>
-            <Logo onClick={goHome} />
+            <Logo src={`${process.env.PUBLIC_URL}/img/logo.png`} onClick={goHome} />
           </h1>
           <SearchInput type="text" value={searchValue} placeholder="상품을 검색해보세요" onChange={onChangeSearch} />
         </Row>
@@ -120,9 +120,11 @@ const Row = memo(
   styled.div`
     display: flex;
     align-items: center;
+    width: 50%;
 
-    & > button {
-      cursor: pointer;
+    & > h1 {
+      width: 25%;
+      margin-right: 30px;
     }
   `,
   rowAreEqual
@@ -154,22 +156,19 @@ const MyPageWrapper = memo(
   isToggleEqual
 );
 
-const Logo = memo(styled.a`
+const Logo = memo(styled.img`
   display: flex;
   align-items: center;
-  margin-right: 30px;
-
-  &:after {
-    content: '';
-    width: 124px;
-    height: 38px;
-    background-image: url('../../img/logo.png');
-    background-repeat: no-repeat;
-  }
+  cursor: pointer;
+  min-width: 80px;
+  width: 100%;
+  height: 38px;
 `);
 
 const SearchInput = memo(styled.input`
-  min-width: 200px;
+  width: 75%;
+  min-width: 180px;
+  max-width: 400px;
   text-indent: 22px;
   padding: 13px 0px;
   box-sizing: border-box;
