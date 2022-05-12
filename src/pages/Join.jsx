@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 
-import SignLogo from '../../components/layouts/SignLogo';
-import SelectType from '../../components/LoginJoin/SelectType';
-import JoinForm from './JoinForm';
-import JoinButton from './JoinButton';
-import CheckRule from './inputs/CheckRule';
+import SignLogo from '../components/common/SignLogo';
+import SelectType from '../components/common/SelectType';
+import JoinForm from '../components/join/JoinForm';
+import JoinButton from '../components/join/JoinButton';
+import CheckRule from '../components/input/CheckRule';
 
 const Join = () => {
   return (

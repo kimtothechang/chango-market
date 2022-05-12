@@ -2,13 +2,11 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import './reset.css';
 
-import { RecoilRoot } from 'recoil';
-
-import Home from './pages/home/Home.jsx';
-import Login from './pages/login/Login.jsx';
-import Cart from './pages/cart/Cart.jsx';
-import Join from './pages/join/Join.jsx';
-import Product from './pages/product/Product';
+import Home from './pages/Home.jsx';
+import Login from './pages/Login.jsx';
+import Cart from './pages/Cart.jsx';
+import Join from './pages/Join.jsx';
+import Product from './pages/Product';
 
 function App() {
   return (

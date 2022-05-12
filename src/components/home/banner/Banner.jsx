@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import BannerCard from './BannerCard';
 import BannerButton from './BannerButton';
-import { BASIC_PAGE_WIDTH } from '../../constants';
+import { BASIC_PAGE_WIDTH } from '../../../constants';
 
 const dummyBannerImg = [
   {

@@ -3,12 +3,12 @@ import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
 import { useRecoilState } from 'recoil';
-import { myPageToggle } from '../../Atom';
+import { myPageToggle } from '../Atom';
 
-import ItemList from './ItemList';
-import IconButton from '../../components/IconButton';
-import Banner from './Banner';
-import Header from '../../components/layouts/Header';
+import ItemList from '../components/home/ItemList';
+import IconButton from '../components/common/IconButton';
+import Banner from '../components/home/banner/Banner';
+import Header from '../components/layouts/Header';
 
 const Home = () => {
   const navigate = useNavigate();

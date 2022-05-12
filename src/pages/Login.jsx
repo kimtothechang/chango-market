@@ -2,9 +2,9 @@ import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import SelectType from '../../components/LoginJoin/SelectType';
-import LoginForm from './LoginForm';
-import SignLogo from '../../components/layouts/SignLogo';
+import SelectType from '../components/common/SelectType';
+import LoginForm from '../components/login/LoginForm';
+import SignLogo from '../components/common/SignLogo';
 
 const Login = () => {
   const navigate = useNavigate();

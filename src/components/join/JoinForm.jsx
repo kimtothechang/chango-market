@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { memo, useCallback, useRef } from 'react';
 
-import LongInput from './inputs/LongInput';
-import ShortInput from './inputs/ShortInput';
-import MiddleInput from './inputs/MiddleInput';
+import LongInput from '../../components/input/LongInput';
+import ShortInput from '../../components/input/ShortInput';
+import MiddleInput from '../../components/input/MiddleInput';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { joinState, joinValidState, joinTypeState } from '../../Atom';
@@ -11,8 +11,8 @@ import { useState, useEffect } from 'react';
 
 import { BASIC_SERVER_URL, regxObj } from '../../constants';
 import InputTitle from './InputTitle';
-import ButtonInput from './inputs/ButtonInput';
-import PwInput from './inputs/PwInput';
+import ButtonInput from '../../components/input/ButtonInput';
+import PwInput from '../../components/input/PwInput';
 import Warning from './Warning';
 
 // 리렌더링 방지
