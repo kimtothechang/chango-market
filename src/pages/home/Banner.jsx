@@ -7,22 +7,22 @@ import { BASIC_PAGE_WIDTH } from '../../constants';
 const dummyBannerImg = [
   {
     id: 0,
-    src: `${process.env.PUBLIC_URL}/assets/banner/coding.png`,
+    src: `${process.env.PUBLIC_URL}/assets/banner/banner1.jpg`,
     alt: '배너이미지',
   },
   {
     id: 1,
-    src: `${process.env.PUBLIC_URL}/assets/banner/allhappy.jpeg`,
+    src: `${process.env.PUBLIC_URL}/assets/banner/banner2.jpg`,
     alt: '배너이미지',
   },
   {
     id: 2,
-    src: `${process.env.PUBLIC_URL}/assets/banner/snowman.jpeg`,
+    src: `${process.env.PUBLIC_URL}/assets/banner/banner3.jpg`,
     alt: '배너이미지',
   },
   {
     id: 3,
-    src: `${process.env.PUBLIC_URL}/assets/banner/texasgang.jpeg`,
+    src: `${process.env.PUBLIC_URL}/assets/banner/banner4.jpg`,
     alt: '배너이미지',
   },
 ];
@@ -37,6 +37,40 @@ const Banner = () => {
     setActiveImg(move.id + 1);
   };
 
+  const movePrevCaroucel = () => {
+    setCaroucel((current) => {
+      if (current > 0) {
+        return current - 1;
+      } else {
+        return dummyBannerImg.length - 1;
+      }
+    });
+    setActiveImg((current) => {
+      if (current > 1) {
+        return current - 1;
+      } else {
+        return dummyBannerImg.length;
+      }
+    });
+  };
+
+  const moveNextCaroucel = () => {
+    setCaroucel((current) => {
+      if (current < dummyBannerImg.length - 1) {
+        return current + 1;
+      } else {
+        return 0;
+      }
+    });
+    setActiveImg((current) => {
+      if (current < dummyBannerImg.length) {
+        return current + 1;
+      } else {
+        return 1;
+      }
+    });
+  };
+
   return (
     <MyBanner>
       <ImgWrapper howMove={caroucel}>
@@ -49,11 +83,39 @@ const Banner = () => {
           <BannerButton key={card.id} onClick={() => moveCaroucel(card)} />
         ))}
       </ButtonWrapper>
+      <PrevButton onClick={() => movePrevCaroucel()}>{'<'}</PrevButton>
+      <NextButton onClick={() => moveNextCaroucel()}>{'>'}</NextButton>
     </MyBanner>
   );
 };
 
 export default Banner;
+
+const PrevButton = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  color: rgba(0, 0, 0, 0.75);
+  font-size: 32px;
+  width: 5%;
+  height: 10%;
+  border: none;
+  background-color: transparent;
+`;
+
+const NextButton = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 0;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 32px;
+  width: 5%;
+  height: 10%;
+  border: none;
+  background-color: transparent;
+`;
 
 const MyBanner = styled.section`
   position: relative;

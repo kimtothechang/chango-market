@@ -4,6 +4,7 @@ import SignLogo from '../../components/layouts/SignLogo';
 import SelectType from '../../components/LoginJoin/SelectType';
 import JoinForm from './JoinForm';
 import JoinButton from './JoinButton';
+import CheckRule from './inputs/CheckRule';
 
 const Join = () => {
   return (
@@ -13,6 +14,7 @@ const Join = () => {
         <SelectType leftText="구매회원가입" rightText="판매회원가입" />
         <JoinForm />
       </FormWrapper>
+      <CheckRule />
       <JoinButton />
     </JoinWrapper>
   );

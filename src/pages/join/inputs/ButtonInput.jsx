@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import { memo } from 'react';
 
+import { ColorObject } from '../../../constants';
+
 const ValueEqual = (prevProps, nextProps) => {
   return prevProps.value === nextProps.value && prevProps.valid === nextProps.valid;
 };
@@ -23,7 +25,7 @@ const InputWrapper = styled.div`
 
   & > button {
     width: 25%;
-    background-color: #21bf48;
+    background-color: ${ColorObject.basic};
     color: white;
     border: none;
     border-radius: 5px;
@@ -37,4 +39,8 @@ const Input = styled.input`
   padding: 16px;
   border: 1px solid #c4c4c4;
   border-radius: 5px;
+
+  &:focus {
+    outline: none;
+  }
 `;

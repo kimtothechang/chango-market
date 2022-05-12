@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import { memo } from 'react';
 
+import { ColorObject } from '../../../constants';
+
 const ValueEqual = (prevProps, nextProps) => {
   return prevProps.value === nextProps.value && prevProps.pwValid === nextProps.pwValid;
 };
@@ -46,6 +48,10 @@ const Input = memo(
     padding: 16px;
     border: 1px solid #c4c4c4;
     border-radius: 5px;
+
+    &:focus {
+      outline: none;
+    }
   `,
   InputEqual
 );
@@ -65,7 +71,7 @@ const Check = memo(
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: ${(props) => (props.pwValid ? '#21BF48' : '#f2f2f2')};
+    background-color: ${(props) => (props.pwValid ? ColorObject.basic : '#f2f2f2')};
     color: white;
   `,
   CheckEqual

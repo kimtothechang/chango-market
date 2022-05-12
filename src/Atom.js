@@ -51,6 +51,7 @@ export const joinValidState = atom({
     company: false,
     companyCheck: false,
     store: false,
+    check: false,
   },
 });
 
@@ -85,7 +86,14 @@ export const joinSellerValidState = atom({
     email: false,
     compnayNumber: false,
     store: false,
+    check: false,
   },
+});
+
+// 약관 동의
+export const joinAgree = atom({
+  key: 'joinAgree',
+  dafault: false,
 });
 
 // 로그인 State

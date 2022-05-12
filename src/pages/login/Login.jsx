@@ -46,7 +46,7 @@ const FormWrapper = styled.div`
 
 const SignUp = styled.p`
   margin-top: 30px;
-  color: #333;
+  color: #6e6e6e;
   font-size: 16px;
   font-weight: 400;
   cursor: pointer;

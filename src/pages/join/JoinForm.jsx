@@ -306,29 +306,11 @@ const Section = styled.section`
   border-top-right-radius: 0px;
 `;
 
-const IdEqual = (prevProps, nextProps) => {
-  return prevProps.children[0].props.value === nextProps.children[0].props.value;
-};
-
-const PwEqual = (prevProps, nextProps) => {
-  return prevProps.children.props.value === nextProps.children.props.value;
-};
-
-const IdWrapper = memo(styled.div``, IdEqual);
-
-const PwCheckWrapper = memo(styled.div``, IdEqual);
-
 const NumberWrapper = memo(
   styled.div`
     display: flex;
     justify-content: space-between;
-
-    & > div > input {
-      padding-top: 16px;
-      padding-bottom: 16px;
-      border: 1px solid #c4c4c4;
-      border-radius: 5px;
-    }
+    width: 100%;
   `,
   NumberEqual
 );
@@ -345,15 +327,6 @@ const EmailWrapper = memo(
 
     & > div {
       flex-grow: 1;
-    }
-
-    & > div > input {
-      width: 100%;
-      box-sizing: border-box;
-      padding-top: 16px;
-      padding-bottom: 16px;
-      border: 1px solid #c4c4c4;
-      border-radius: 5px;
     }
   `,
   EmailEqual

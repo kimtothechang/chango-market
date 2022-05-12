@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
-import { useCallback, memo } from 'react';
+import { useCallback, memo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useRecoilValue } from 'recoil';
 import { joinState, joinTypeState, joinValidState } from '../../Atom';
 
-import { BASIC_SERVER_URL } from '../../constants';
+import { BASIC_SERVER_URL, ColorObject } from '../../constants';
 
 const JoinButton = () => {
   const joinInfo = useRecoilValue(joinState);
@@ -75,6 +75,7 @@ const JoinButton = () => {
     },
     [joinType, joinInfo]
   );
+
   return (
     <div>
       <Button onClick={() => signUp(joinType, joinInfo)} disabled={!validCheck(joinType, joinValid)} activated={!validCheck(joinType, joinValid)}>
@@ -93,7 +94,7 @@ const Button = styled.button`
   font-size: 18px;
   color: white;
   background-color: ${(props) => {
-    return props.activated ? '#c4c4c4' : '#21bf48';
+    return props.activated ? '#c4c4c4' : ColorObject.basic;
   }};
   border: none;
   border-radius: 10px;

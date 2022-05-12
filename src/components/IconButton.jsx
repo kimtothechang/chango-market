@@ -18,7 +18,7 @@ const Button = styled.button`
   justify-content: center;
   align-items: center;
   background-color: inherit;
-  margin-left: 26px;
+  margin-right: 26px;
 
   & > img {
     display: block;

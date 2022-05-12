@@ -21,4 +21,18 @@ export default memo(ShortInput, ValueEqual);
 
 const InputWrapper = styled.div`
   margin-bottom: 16px;
+  width: 32%;
+
+  & > input {
+    width: 100%;
+    padding-left: 16px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    border: 1px solid #c4c4c4;
+    border-radius: 5px;
+
+    &:focus {
+      outline: none;
+    }
+  }
 `;

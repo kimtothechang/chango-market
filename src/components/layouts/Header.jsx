@@ -5,14 +5,10 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { myPageToggle } from '../../Atom';
 
-import { BASIC_PAGE_WIDTH } from '../../constants';
+import { BASIC_PAGE_WIDTH, ColorObject } from '../../constants';
 
 const rowAreEqual = (prevProps, nextProps) => {
   return prevProps.children[1].props.value === nextProps.children[1].props.value;
-};
-
-const iconsAreEqual = (prevProps, nextProps) => {
-  return prevProps.children[0].props.text === nextProps.children[0].props.text;
 };
 
 const isToggleEqual = (prevProps, nextProps) => {
@@ -48,21 +44,18 @@ const Header = ({ lefticon, righticon }) => {
           </h1>
           <SearchInput type="text" value={searchValue} placeholder="상품을 검색해보세요" onChange={onChangeSearch} />
         </Row>
-        {localStorage.getItem('token') ? (
-          <MyPageWrapper>
-            {lefticon}
-            {righticon}
+        <IconWrapper>
+          {lefticon}
+          {righticon}
+          {localStorage.getItem('token') ? (
             <MyPage toggle={toggle}>
               <p>마이페이지</p>
               <p onClick={LogOut}>로그아웃</p>
             </MyPage>
-          </MyPageWrapper>
-        ) : (
-          <IconWrapper>
-            {lefticon}
-            {righticon}
-          </IconWrapper>
-        )}
+          ) : (
+            ''
+          )}
+        </IconWrapper>
       </MyHeader>
     </HeaderWrapper>
   );
@@ -72,12 +65,12 @@ export default Header;
 
 const MyPage = styled.div`
   position: absolute;
-  right: -32.5px;
+  right: -1px;
   bottom: -100px;
   display: ${(props) => (props.toggle ? 'flex' : 'none')};
   box-shadow: 5px 4px 5px rgba(0, 0, 0, 0.1);
   background-color: white;
-  width: 130px;
+  width: 110px;
   border-radius: 10px;
   flex-direction: column;
   text-align: center;
@@ -92,9 +85,10 @@ const MyPage = styled.div`
 
   & > p {
     cursor: pointer;
-    width: 110px;
+    width: 90px;
     padding: 10px;
     border-radius: 5px;
+    font-size: 14px;
   }
 
   & > p:hover {
@@ -118,6 +112,7 @@ const MyHeader = styled.header`
 
 const Row = memo(
   styled.div`
+    width: 100%;
     display: flex;
     align-items: center;
     width: 50%;
@@ -135,19 +130,7 @@ const IconWrapper = memo(
     position: relative;
     display: flex;
     align-items: center;
-
-    & > button {
-      cursor: pointer;
-    }
-  `,
-  iconsAreEqual
-);
-
-const MyPageWrapper = memo(
-  styled.div`
-    position: relative;
-    display: flex;
-    align-items: center;
+    justify-content: flex-start;
 
     & > button {
       cursor: pointer;
@@ -173,12 +156,16 @@ const SearchInput = memo(styled.input`
   padding: 13px 0px;
   box-sizing: border-box;
   height: 46px;
-  border: 2px solid #21bf48;
+  border: 2px solid ${ColorObject.basic};
   border-radius: 50px;
 
   &::placeholder {
     color: #767676;
     font-size: 14px;
     font-weight: 400;
+  }
+
+  &:focus {
+    outline: none;
   }
 `);

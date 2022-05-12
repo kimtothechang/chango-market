@@ -18,5 +18,9 @@ const InputWrapper = styled.div`
     padding: 22px;
     border: none;
     border-bottom: 1px solid #c4c4c4;
+
+    &:focus {
+      outline: none;
+    }
   }
 `;

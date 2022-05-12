@@ -31,4 +31,8 @@ const Input = styled.input`
   padding: 16px;
   border: 1px solid #c4c4c4;
   border-radius: 5px;
+
+  &:focus {
+    outline: none;
+  }
 `;

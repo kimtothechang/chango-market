@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { joinTypeState, loginInfoState } from '../../Atom';
 
 import LoginInput from './LoginInput';
-import { BASIC_SERVER_URL, ERROR_MESSAGE } from '../../constants';
+import { BASIC_SERVER_URL, ERROR_MESSAGE, ColorObject } from '../../constants';
 
 const LoginForm = () => {
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
@@ -105,7 +105,7 @@ const InputWrapper = styled.div`
     height: 60px;
     border: none;
     border-radius: 5px;
-    background-color: #21bf48;
+    background-color: ${ColorObject.basic};
     color: white;
     font-size: 18px;
     font-weight: 700;

@@ -17,5 +17,17 @@ const MiddleInput = ({ type, value, onChange }) => {
 export default memo(MiddleInput, ValueEqual);
 
 const InputWrapper = styled.div`
-  margin-bottom: 16px;
+  & > input {
+    padding-left: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    border: 1px solid #c4c4c4;
+    border-radius: 5px;
+
+    &:focus {
+      outline: none;
+    }
+  }
 `;
