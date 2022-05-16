@@ -6,6 +6,7 @@ import { joinTypeState, loginInfoState } from '../../Atom';
 
 import LoginInput from './LoginInput';
 import { BASIC_SERVER_URL, ERROR_MESSAGE, ColorObject } from '../../constants';
+import LongButton from '../button/LongButton';
 
 const LoginForm = () => {
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);

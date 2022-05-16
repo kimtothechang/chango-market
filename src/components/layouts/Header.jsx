@@ -12,6 +12,7 @@ const rowAreEqual = (prevProps, nextProps) => {
 };
 
 const isToggleEqual = (prevProps, nextProps) => {
+  console.log(prevProps, nextProps);
   return prevProps.children[2].props.toggle === nextProps.children[2].props.toggle;
 };
 
@@ -125,19 +126,16 @@ const Row = memo(
   rowAreEqual
 );
 
-const IconWrapper = memo(
-  styled.div`
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
+const IconWrapper = memo(styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 
-    & > button {
-      cursor: pointer;
-    }
-  `,
-  isToggleEqual
-);
+  & > button {
+    cursor: pointer;
+  }
+`);
 
 const Logo = memo(styled.img`
   display: flex;
