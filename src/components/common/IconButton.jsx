@@ -12,16 +12,23 @@ const IconButton = ({ src, alt, text, onClick }) => {
 export default IconButton;
 
 const Button = styled.button`
-  border: none;
+  @media screen and (max-width: 500px) {
+    margin-right: 8px;
+  }
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: inherit;
   margin-right: 26px;
+  border: none;
+  background-color: inherit;
+  width: 50%;
+  max-width: 60px;
 
   & > img {
     display: block;
+    width: 50%;
+    max-width: 50%;
   }
 
   & > p {

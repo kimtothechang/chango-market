@@ -20,6 +20,10 @@ export default Footer;
 
 const FooterBackGround = styled.footer`
   background-color: #f2f2f2;
+
+  @media screen and (max-width: 1280px) {
+    padding: 24px;
+  }
 `;
 
 const FooterWrapper = styled.section`

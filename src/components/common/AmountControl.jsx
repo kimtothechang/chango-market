@@ -22,8 +22,10 @@ const AmountControl = ({ value, increase, decrease }) => {
 export default AmountControl;
 
 const AmountWrapper = styled.div`
+  box-sizing: content-box;
   display: flex;
   width: 150px;
+  height: 50px;
   border: 1px solid #c4c4c4;
   border-radius: 5px;
 
@@ -33,6 +35,7 @@ const AmountWrapper = styled.div`
     border: none;
     border-radius: 5px;
     background-color: white;
+    cursor: pointer;
   }
 
   & > p {

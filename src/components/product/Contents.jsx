@@ -24,7 +24,7 @@ const Contents = ({ info, review, qna, takeBack }) => {
   useEffect(() => {}, [clicked]);
 
   return (
-    <div>
+    <ContentsWrapper>
       <MainButtonWrapper clicked={clicked}>
         <button onClick={() => changeContents(1, 'info')}>설명</button>
         <button onClick={() => changeContents(2, 'review')}>리뷰</button>
@@ -32,7 +32,7 @@ const Contents = ({ info, review, qna, takeBack }) => {
         <button onClick={() => changeContents(4, 'takeBack')}>반품/교환정보</button>
       </MainButtonWrapper>
       <MainContent>{putContent(clicked)}</MainContent>
-    </div>
+    </ContentsWrapper>
   );
 };
 
@@ -45,6 +45,12 @@ Contents.defaultProps = {
 
 export default Contents;
 
+const ContentsWrapper = styled.div`
+  @media screen and (max-width: 1280px) {
+    padding: 24px;
+  }
+`;
+
 const MainButtonWrapper = styled.div`
   display: flex;
 
@@ -56,6 +62,7 @@ const MainButtonWrapper = styled.div`
     border-bottom: 6px solid #c4c4c4;
     background-color: white;
     color: #767676;
+    cursor: pointer;
   }
 
   & > button:nth-of-type(${(props) => props.clicked}) {

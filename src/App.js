@@ -7,10 +7,12 @@ import Login from './pages/Login.jsx';
 import Cart from './pages/Cart.jsx';
 import Join from './pages/Join.jsx';
 import Product from './pages/Product';
+import ScrollToTop from './utils/ScrollToTop';
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

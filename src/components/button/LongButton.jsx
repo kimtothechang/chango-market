@@ -28,4 +28,5 @@ const Button = styled.button`
   color: white;
   font-size: 18px;
   background-color: ${(props) => props.color};
+  cursor: pointer;
 `;

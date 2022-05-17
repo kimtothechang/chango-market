@@ -29,4 +29,5 @@ const Button = styled.button`
   font-size: 18px;
   font-weight: 700;
   background-color: ${(props) => props.color};
+  cursor: pointer;
 `;

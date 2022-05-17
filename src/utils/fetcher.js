@@ -20,7 +20,7 @@ const fetcherAuth = async (param, method) => {
     method: method,
     headers: {
       'Content-Type': 'application/json',
-      Authorization: token,
+      Authorization: `JWT ${token}`,
     },
   });
   const data = await res.json();
@@ -35,9 +35,9 @@ const fetcherBody = async (param, method, content) => {
     method: method,
     headers: {
       'Content-Type': 'application/json',
-      Authorization: token,
+      Authorization: `JWT ${token}`,
     },
-    body: { ...content },
+    body: JSON.stringify({ ...content }),
   });
   const data = await res.json();
 

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 
 import { BASIC_PAGE_WIDTH, BASIC_SERVER_URL } from '../../constants';
 import ItemCard from './ItemCard';
@@ -37,7 +37,7 @@ const ItemList = () => {
   );
 };
 
-export default ItemList;
+export default memo(ItemList);
 
 const ItemListWrapper = styled.article`
   margin: 0px auto;

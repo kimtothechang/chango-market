@@ -4,10 +4,13 @@ import { useParams, useNavigate } from 'react-router';
 import { useRecoilState } from 'recoil';
 import { myPageToggle } from '../Atom';
 
-import Header from '../components/layouts/Header';
-import IconButton from '../components/common/IconButton';
+// Etc
 import { fetcher } from '../utils/fetcher';
 import { BASIC_PAGE_WIDTH, ColorObject } from '../constants';
+
+// Components
+import Header from '../components/layouts/Header';
+import IconButton from '../components/common/IconButton';
 import Footer from '../components/layouts/Footer';
 import LongButton from '../components/button/LongButton';
 import MiddleButton from '../components/button/MiddleButton';

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import styled from '@emotion/styled';
 import BannerCard from './BannerCard';
 import BannerButton from './BannerButton';
@@ -89,7 +89,7 @@ const Banner = () => {
   );
 };
 
-export default Banner;
+export default memo(Banner);
 
 const PrevButton = styled.button`
   position: absolute;

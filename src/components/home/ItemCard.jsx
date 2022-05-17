@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 
 const ItemCard = ({ img, alt, seller, product, price, id }) => {
@@ -21,7 +22,7 @@ const ItemCard = ({ img, alt, seller, product, price, id }) => {
   );
 };
 
-export default ItemCard;
+export default memo(ItemCard);
 
 const CardWrapper = styled.div`
   flex-basis: 300px;
