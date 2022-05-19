@@ -2,17 +2,16 @@ import { useState, memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from '@emotion/styled';
-import { joinTypeState, loginInfoState } from '../../Atom';
+import { joinTypeState, loginInfoState, loginState } from '../../Atom';
 
 import LoginInput from './LoginInput';
 import { BASIC_SERVER_URL, ERROR_MESSAGE, ColorObject } from '../../constants';
-import LongButton from '../button/LongButton';
 
 const LoginForm = () => {
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
-  const [errorMessage, setErrorMessage] = useState('');
-
+  const [logined, setLogined] = useRecoilState(loginState);
   const loginType = useRecoilValue(joinTypeState);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const navigate = useNavigate();
 
@@ -76,6 +75,12 @@ const LoginForm = () => {
       localStorage.setItem('id', id);
       localStorage.setItem('token', data.token);
       // setLogin(true);
+      console.log('seLogined before');
+      setLogined((current) => {
+        console.log('seLOgined ing', !current);
+        return !current;
+      });
+      console.log('seLogined after');
       navigate('/');
     }
   };
