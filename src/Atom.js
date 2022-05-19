@@ -104,3 +104,9 @@ export const loginInfoState = atom({
     pw: '',
   },
 });
+
+// 장바구니 총 상품 금액
+export const totalPayment = atom({
+  key: 'totalPayment',
+  default: 0,
+});

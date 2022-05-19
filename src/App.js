@@ -8,6 +8,7 @@ import Cart from './pages/Cart.jsx';
 import Join from './pages/Join.jsx';
 import Product from './pages/Product';
 import ScrollToTop from './utils/ScrollToTop';
+import Order from './pages/Order';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/join" element={<Join />} />
         <Route path="/products/:id" element={<Product />} />
+        <Route path="/order" element={<Order />} />
       </Routes>
     </BrowserRouter>
   );
