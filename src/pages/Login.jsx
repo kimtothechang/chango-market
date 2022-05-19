@@ -11,7 +11,7 @@ const Login = () => {
 
   const goJoin = useCallback(() => {
     navigate('/join');
-  }, []);
+  }, [navigate]);
 
   return (
     <Section>

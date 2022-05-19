@@ -1,29 +1,24 @@
 import styled from '@emotion/styled';
-import { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router';
-import { useRecoilState } from 'recoil';
-import { myPageToggle } from '../Atom';
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router';
 
 // Etc
-import { fetcher } from '../utils/fetcher';
+import { fetcher, fetcherBody } from '../utils/fetcher';
 import { BASIC_PAGE_WIDTH, ColorObject } from '../constants';
 
 // Components
 import Header from '../components/layouts/Header';
-import IconButton from '../components/common/IconButton';
 import Footer from '../components/layouts/Footer';
-import LongButton from '../components/button/LongButton';
 import MiddleButton from '../components/button/MiddleButton';
 import AmountControl from '../components/common/AmountControl';
 import Contents from '../components/product/Contents';
+import { Link } from 'react-router-dom';
 
 const Product = () => {
   const postId = useParams().id;
-  const navigate = useNavigate();
   const [productData, setProductData] = useState({
     price: 0,
   });
-  const [toggle, setToggle] = useRecoilState(myPageToggle);
   const [amount, setAmount] = useState(1);
 
   const getData = async () => {
@@ -32,24 +27,26 @@ const Product = () => {
     setProductData((current) => {
       return { ...current, ...res };
     });
-
-    console.log(res);
   };
 
   useEffect(() => {
     getData();
   }, []);
 
-  const switchToggle = useCallback(() => {
-    setToggle((current) => !current);
-  }, []);
-
   const buyNow = () => {
     console.log('buynow~');
   };
 
-  const addCard = () => {
-    console.log('addCart~');
+  const addCard = async () => {
+    const res = await fetcherBody('cart/', 'POST', {
+      product_id: `${postId}`,
+      quantity: amount,
+      check: true,
+    });
+
+    if (res !== undefined) {
+      alert('장바구니에 추가되었습니다.');
+    }
   };
 
   const increase = (value) => {
@@ -62,17 +59,7 @@ const Product = () => {
 
   return (
     <ProductContainer>
-      {localStorage.getItem('token') ? (
-        <Header
-          lefticon={<IconButton onClick={() => navigate('/cart')} text="장바구니" src={`${process.env.PUBLIC_URL}/assets/icon-shopping-cart.svg`} />}
-          righticon={<IconButton onClick={switchToggle} text="마이페이지" src={`${process.env.PUBLIC_URL}/assets/icon-user.svg`} />}
-        />
-      ) : (
-        <Header
-          lefticon={<IconButton text="장바구니" src={`${process.env.PUBLIC_URL}/assets/icon-shopping-cart.svg`} />}
-          righticon={<IconButton onClick={() => navigate('/login')} text="로그인" src={`${process.env.PUBLIC_URL}/assets/icon-user.svg`} />}
-        />
-      )}
+      <Header />
       <ProductWrapper>
         <ProductHeader>
           <div>
@@ -82,7 +69,7 @@ const Product = () => {
             <p>{productData.seller_store}</p>
             <p>{productData.product_name}</p>
             <p>
-              {productData.price}
+              {productData.price.toLocaleString()}
               <span>원</span>
             </p>
             <p>택배배송 / 무료배송</p>
@@ -101,13 +88,15 @@ const Product = () => {
                 </p>
                 <div></div>
                 <p>
-                  {productData.price * amount}
+                  {(productData.price * amount).toLocaleString()}
                   <span>원</span>
                 </p>
               </div>
             </TotalWrapper>
             <HeaderButtonWrapper>
-              <LongButton text="바로 구매" onClick={buyNow} />
+              <BuyLink to="/order" state={[{ ...productData, amount }]}>
+                <BuyButton>바로 구매</BuyButton>
+              </BuyLink>
               <MiddleButton text="장바구니" onClick={addCard} color="#767676" />
             </HeaderButtonWrapper>
           </div>
@@ -250,7 +239,7 @@ const ProductHeader = styled.header`
 const HeaderButtonWrapper = styled.div`
   display: flex;
 
-  & > button:first-of-type {
+  & > a:first-of-type {
     margin-right: 14px;
   }
 `;
@@ -260,4 +249,29 @@ const ProductMain = styled.main`
   flex-direction: column;
   margin: 0 auto;
   max-width: ${BASIC_PAGE_WIDTH};
+`;
+
+const BuyLink = styled(Link)`
+  text-decoration: none;
+  text-decoration-line: none;
+
+  &:visited,
+  &:active {
+    color: white;
+  }
+`;
+
+const BuyButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 19px;
+  padding-bottom: 19px;
+  width: 416px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-size: 18px;
+  background-color: ${ColorObject.basic};
+  cursor: pointer;
 `;

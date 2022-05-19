@@ -1,15 +1,13 @@
-import styled from '@emotion/styled';
 import { useState, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import styled from '@emotion/styled';
+
+import { useRecoilValue } from 'recoil';
 import { myPageToggle } from '../../Atom';
 
-import IconButton from '../common/IconButton';
-
 import { BASIC_PAGE_WIDTH, ColorObject } from '../../constants';
-import { useEffect } from 'react';
 
-const SearchAreEqual = (prevProps, nextProps) => {
+const rowAreEqual = (prevProps, nextProps) => {
   return prevProps.children[1].props.value === nextProps.children[1].props.value;
 };
 
@@ -18,22 +16,16 @@ const isToggleEqual = (prevProps, nextProps) => {
   return prevProps.children[2].props.toggle === nextProps.children[2].props.toggle;
 };
 
-const Header = () => {
+const Header = ({ lefticon, righticon }) => {
   const [searchValue, setSearchValue] = useState('');
-  const [toggle, setToggle] = useRecoilState(myPageToggle);
-  const [logined, setLogined] = useState(false);
+
+  const toggle = useRecoilValue(myPageToggle);
+
   const navigate = useNavigate();
 
-  const goCart = useCallback(() => {
-    if (logined) {
-      navigate('/cart');
-    } else {
-      alert('로그인을 먼저 진행해주세요.');
-    }
-  }, [logined]);
-
-  const goHome = useCallback(() => navigate('/'), []);
-  const goLogin = useCallback(() => navigate('/login'), []);
+  const goHome = useCallback(() => {
+    navigate('/');
+  }, [navigate]);
 
   const onChangeSearch = useCallback((e) => {
     setSearchValue(e.target.value);
@@ -44,33 +36,19 @@ const Header = () => {
     window.location.reload();
   };
 
-  const switchToggle = useCallback(() => {
-    setToggle((current) => !current);
-  }, []);
-
-  useEffect(() => {
-    if (localStorage.getItem('token')) {
-      setLogined(true);
-    }
-  }, []);
-
   return (
     <HeaderWrapper>
       <MyHeader>
-        <SearchWrapper>
+        <Row>
           <h1>
             <Logo src={`${process.env.PUBLIC_URL}/img/logo.png`} onClick={goHome} />
           </h1>
           <SearchInput type="text" value={searchValue} placeholder="상품을 검색해보세요" onChange={onChangeSearch} />
-        </SearchWrapper>
+        </Row>
         <IconWrapper>
-          <IconButton onClick={goCart} text="장바구니" src={`${process.env.PUBLIC_URL}/assets/icon-shopping-cart.svg`} />
-          {logined ? (
-            <IconButton onClick={switchToggle} text="마이페이지" src={`${process.env.PUBLIC_URL}/assets/icon-user.svg`} />
-          ) : (
-            <IconButton onClick={goLogin} text="로그인" src={`${process.env.PUBLIC_URL}/assets/icon-user.svg`} />
-          )}
-          {logined ? (
+          {lefticon}
+          {righticon}
+          {localStorage.getItem('token') ? (
             <MyPage toggle={toggle}>
               <p>마이페이지</p>
               <p onClick={LogOut}>로그아웃</p>
@@ -133,7 +111,7 @@ const MyHeader = styled.header`
   margin: 0px auto;
 `;
 
-const SearchWrapper = memo(
+const Row = memo(
   styled.div`
     width: 100%;
     display: flex;
@@ -145,7 +123,7 @@ const SearchWrapper = memo(
       margin-right: 30px;
     }
   `,
-  SearchAreEqual
+  rowAreEqual
 );
 
 const IconWrapper = memo(styled.div`
