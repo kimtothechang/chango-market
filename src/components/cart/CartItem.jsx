@@ -1,11 +1,46 @@
 import styled from '@emotion/styled';
+import { useState, useEffect } from 'react';
+import { useRecoilState } from 'recoil';
+import { totalPayment } from '../../Atom';
 
 import AmountControl from '../common/AmountControl';
 
 import { ColorObject } from '../../constants';
-import { useEffect } from 'react';
+import { fetcherAuth, fetcherBody } from '../../utils/fetcher';
 
-const CartItem = ({ img, seller, product, price, quantity }) => {
+const CartItem = ({ cartId, productId, img, seller, product, price, quantity, isActive, deleteItem }) => {
+  const [productQuantity, setProductQuantity] = useState(0);
+  const [payment, setPayment] = useRecoilState(totalPayment);
+
+  const increaseItem = async () => {
+    if (productQuantity < 99) {
+      await fetcherBody(`cart/${cartId}/`, 'PUT', {
+        product_id: productId,
+        quantity: productQuantity + 1,
+        is_active: isActive,
+      });
+
+      setProductQuantity((current) => current + 1);
+      setPayment((current) => current + price);
+    }
+  };
+  const decreaseItem = async () => {
+    if (productQuantity > 1) {
+      await fetcherBody(`cart/${cartId}/`, 'PUT', {
+        product_id: productId,
+        quantity: productQuantity - 1,
+        is_active: isActive,
+      });
+
+      setProductQuantity((current) => current - 1);
+      setPayment((current) => current - price);
+    }
+  };
+
+  useEffect(() => {
+    setProductQuantity((current) => (current = quantity));
+  }, [quantity]);
+
   return (
     <CartItemWrapper>
       <ItemInfo>
@@ -20,13 +55,19 @@ const CartItem = ({ img, seller, product, price, quantity }) => {
       </ItemInfo>
       <ItemControl>
         <div>
-          <AmountControl value={quantity} />
+          <AmountControl value={productQuantity} increase={increaseItem} decrease={decreaseItem} />
         </div>
         <div>
-          <p>{(quantity * price).toLocaleString()}원</p>
+          <p>{(price * productQuantity).toLocaleString()}원</p>
           <button>주문하기</button>
         </div>
       </ItemControl>
+      <div onClick={() => deleteItem(cartId)}>
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4.14209 18.2842L18.2842 4.14204" stroke="#C4C4C4" strokeWidth="2" />
+          <path d="M18.1421 18.1421L3.99995 3.99996" stroke="#C4C4C4" strokeWidth="2" />
+        </svg>
+      </div>
     </CartItemWrapper>
   );
 };
@@ -42,6 +83,7 @@ CartItem.defaultProps = {
 export default CartItem;
 
 const CartItemWrapper = styled.div`
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -49,6 +91,12 @@ const CartItemWrapper = styled.div`
   flex-wrap: wrap;
   border: 2px solid #e0e0e0;
   border-radius: 10px;
+
+  & > div:last-of-type {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+  }
 `;
 
 const ItemInfo = styled.div`
@@ -110,11 +158,11 @@ const ItemControl = styled.div`
     padding-right: 30px;
   }
 
-  width: 41%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-right: 30px;
+  width: 41%;
   min-width: 400px;
   flex-grow: 1;
 
@@ -128,7 +176,7 @@ const ItemControl = styled.div`
     }
   }
 
-  & > div:last-of-type {
+  & > div:nth-of-type(2) {
     display: flex;
     flex-direction: column;
     align-items: center;

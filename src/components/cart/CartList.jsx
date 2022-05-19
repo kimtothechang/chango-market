@@ -1,24 +1,19 @@
 import styled from '@emotion/styled';
 import { useState, useEffect } from 'react';
+import { useRecoilState } from 'recoil';
+import { totalPayment } from '../../Atom';
 
 import CartItem from './CartItem';
+import PriceInfo from './PriceInfo';
+import MiddleButton from '../button/MiddleButton';
 
-import { BASIC_PAGE_WIDTH } from '../../constants';
-import { fetcher, fetcherAuth, fetcherBody } from '../../utils/fetcher';
+import { BASIC_PAGE_WIDTH, ColorObject } from '../../constants';
+import { fetcher, fetcherAuth } from '../../utils/fetcher';
 
 const CartList = () => {
   const [productItems, setProductItems] = useState([]);
   const [cartItems, setCartItems] = useState([]);
-
-  const addItem = async () => {
-    const res = await fetcherBody('cart/', 'POST', {
-      product_id: '2',
-      quantity: 1,
-      check: true,
-    });
-
-    console.log(res);
-  };
+  const [Payment, setPayment] = useRecoilState(totalPayment);
 
   const getItems = async () => {
     const res = await fetcherAuth('cart/', 'GET');
@@ -27,13 +22,38 @@ const CartList = () => {
 
   const getProduct = async (data) => {
     if (!!data[0]) {
-      // console.log(data[0].product_id);
-
+      const arr = [];
       for (let product of data) {
         const res = await fetcher(`products/${product.product_id}`, 'GET');
-        setProductItems((current) => [...current, { ...res }]);
+        arr.push({ ...res });
       }
+      setProductItems([...arr]);
     }
+  };
+
+  const getTotalPrice = (data, multiple) => {
+    const res = data.map((item, idx) => item.price * multiple[idx].quantity);
+
+    if (!!res) {
+      if (res.length > 1) {
+        setPayment((current) => (current = res.reduce((a, b) => a + b)));
+      } else {
+        setPayment((current) => (current = res));
+      }
+    } else {
+      setPayment(0);
+    }
+  };
+
+  const deleteItem = async (cartId) => {
+    await fetcherAuth(`cart/${cartId}/`, 'DELETE');
+
+    setCartItems((current) =>
+      current.filter((item) => {
+        console.log(cartId, item.cart_item_id);
+        return cartId !== item.cart_item_id;
+      })
+    );
   };
 
   useEffect(() => {
@@ -45,8 +65,7 @@ const CartList = () => {
   }, [cartItems]);
 
   useEffect(() => {
-    console.log(cartItems);
-    console.log(productItems);
+    getTotalPrice(productItems, cartItems);
   }, [productItems]);
 
   return (
@@ -72,41 +91,33 @@ const CartList = () => {
               product={item.product_name}
               price={item.price}
               quantity={cartItems[idx] ? cartItems[idx].quantity : '0'}
+              cartId={cartItems[idx] ? cartItems[idx].cart_item_id : 0}
+              productId={cartItems[idx] ? cartItems[idx].product_id : 0}
+              isActive={cartItems[idx] ? cartItems[idx].is_active : 'true'}
+              deleteItem={deleteItem}
             />
           );
         })}
       </CartMain>
       <TotalPrice>
+        <PriceInfo title="총 상품금액" price={Payment} />
         <div>
-          <p>총 상품금액</p>
-          <p>00000원</p>
+          <img src={`${process.env.PUBLIC_URL}/assets/icon-minus-line.svg`} alt="" />
         </div>
+        <PriceInfo title="상품 할인" price={0} />
         <div>
-          <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="17" cy="17" r="17" fill="white" />
-            <path d="M7.55566 16.5276H26.4446" stroke="#C4C4C4" strokeWidth="2" />
-          </svg>
+          <img src={`${process.env.PUBLIC_URL}/assets/icon-plus-line.svg`} alt="" />
         </div>
-        <div>
-          <p>상품 할인</p>
-          <p>0원</p>
-        </div>
-        <div>
-          <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="17" cy="17" r="17" fill="white" />
-            <path d="M7.55566 16.5276H26.4446" stroke="#C4C4C4" strokeWidth="2" />
-            <path d="M17 26.4443L17 7.55545" stroke="#C4C4C4" strokeWidth="2" />
-          </svg>
-        </div>
-        <div>
-          <p>배송비</p>
-          <p>0원</p>
-        </div>
+        <PriceInfo title="배송비" price={0} />
         <div>
           <p>결제 예정 금액</p>
-          <p>00000원</p>
+          <p>
+            {Payment.toLocaleString()}
+            <span>원</span>
+          </p>
         </div>
       </TotalPrice>
+      <MiddleButton text="주문하기" color={ColorObject.basic} />
     </CartListWrapper>
   );
 };
@@ -126,6 +137,10 @@ const CartListWrapper = styled.section`
     margin-bottom: 52px;
     font-size: 36px;
     font-weight: 700;
+  }
+
+  & > button {
+    margin-bottom: 160px;
   }
 `;
 
@@ -183,9 +198,47 @@ const CartMain = styled.div`
 const TotalPrice = styled.div`
   display: flex;
   justify-content: space-around;
+  margin-bottom: 40px;
   padding-top: 46px;
   padding-bottom: 42px;
   width: 100%;
   border-radius: 10px;
   background-color: #f2f2f2;
+
+  & > div:nth-of-type(2),
+  div:nth-of-type(4) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & > img {
+      padding: 7.5px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background-color: white;
+    }
+  }
+
+  & > div:last-of-type {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    & > p:first-of-type {
+      margin-bottom: 5px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    & > p:last-of-type {
+      color: #eb5757;
+      font-size: 36px;
+      font-weight: 700;
+
+      & > span {
+        font-size: 18px;
+        font-weight: 400;
+      }
+    }
+  }
 `;
