@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
-const CardItem = ({ img, seller, product, quantity, price }) => {
+const CardItem = ({ img, seller, product, quantity, price, soldout }) => {
   return (
-    <ItemWrapper>
+    <ItemWrapper soldout={soldout}>
       <div>
         <img src={img} alt="상품 사진" />
         <div>
@@ -55,7 +55,7 @@ const ItemWrapper = styled.li`
         font-weight: 400;
       }
       & > p:last-of-type {
-        color: #767676;
+        color: ${(props) => (props.soldout ? '#767676' : 'red')};
         font-size: 14px;
         font-weight: 400;
       }

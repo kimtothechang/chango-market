@@ -6,22 +6,44 @@ import { totalPayment } from '../../Atom';
 import AmountControl from '../common/AmountControl';
 
 import { ColorObject } from '../../constants';
-import { fetcherAuth, fetcherBody } from '../../utils/fetcher';
+import { fetcherBody } from '../../utils/fetcher';
+import { Link } from 'react-router-dom';
 
-const CartItem = ({ cartId, productId, img, seller, product, price, quantity, isActive, deleteItem }) => {
+const CartItem = ({
+  cartId,
+  productId,
+  img,
+  seller,
+  product,
+  price,
+  stock,
+  quantity,
+  isActive,
+  deleteItem,
+  checkedProp,
+  eachCheck,
+  handleCheck,
+  idx,
+  quantityProp,
+  quantitySet,
+}) => {
   const [productQuantity, setProductQuantity] = useState(0);
   const [payment, setPayment] = useRecoilState(totalPayment);
 
   const increaseItem = async () => {
-    if (productQuantity < 99) {
+    if (productQuantity < 99 && productQuantity < stock) {
       await fetcherBody(`cart/${cartId}/`, 'PUT', {
         product_id: productId,
         quantity: productQuantity + 1,
         is_active: isActive,
       });
 
+      quantitySet(1, idx);
+
       setProductQuantity((current) => current + 1);
       setPayment((current) => current + price);
+    } else {
+      alert('현재 상품의 재고가 부족합니다.');
     }
   };
   const decreaseItem = async () => {
@@ -31,6 +53,7 @@ const CartItem = ({ cartId, productId, img, seller, product, price, quantity, is
         quantity: productQuantity - 1,
         is_active: isActive,
       });
+      quantitySet(-1, idx);
 
       setProductQuantity((current) => current - 1);
       setPayment((current) => current - price);
@@ -44,7 +67,7 @@ const CartItem = ({ cartId, productId, img, seller, product, price, quantity, is
   return (
     <CartItemWrapper>
       <ItemInfo>
-        <input type="checkbox" />
+        <input type="checkbox" onChange={() => handleCheck(idx)} checked={checkedProp || eachCheck} />
         <img src={img} alt="상품 사진" />
         <div>
           <p>{seller}</p>
@@ -55,14 +78,20 @@ const CartItem = ({ cartId, productId, img, seller, product, price, quantity, is
       </ItemInfo>
       <ItemControl>
         <div>
-          <AmountControl value={productQuantity} increase={increaseItem} decrease={decreaseItem} />
+          <AmountControl value={quantityProp} increase={increaseItem} decrease={decreaseItem} />
+          {/* <AmountControl value={productQuantity} increase={increaseItem} decrease={decreaseItem} /> */}
         </div>
         <div>
           <p>{(price * productQuantity).toLocaleString()}원</p>
-          <button>주문하기</button>
+          <BuyLink
+            to="/order"
+            state={[{ product_id: productId, image: img, seller_store: seller, product_name: product, amount: productQuantity, price, stock }]}
+          >
+            <button>주문하기</button>
+          </BuyLink>
         </div>
       </ItemControl>
-      <div onClick={() => deleteItem(cartId)}>
+      <div onClick={() => deleteItem(cartId, idx)}>
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M4.14209 18.2842L18.2842 4.14204" stroke="#C4C4C4" strokeWidth="2" />
           <path d="M18.1421 18.1421L3.99995 3.99996" stroke="#C4C4C4" strokeWidth="2" />
@@ -73,13 +102,19 @@ const CartItem = ({ cartId, productId, img, seller, product, price, quantity, is
 };
 
 CartItem.defaultProps = {
+  cartId: '',
+  productId: '',
   img: '',
   seller: '판매자',
   product: '상품 이름',
   price: '가격',
   quantity: '0',
+  stock: '',
+  isActive: '',
+  checkedProp: '',
+  eachCheck: '',
+  idx: '',
 };
-
 export default CartItem;
 
 const CartItemWrapper = styled.div`
@@ -189,7 +224,7 @@ const ItemControl = styled.div`
       color: #eb5757;
     }
 
-    & > button {
+    & > a > button {
       width: 130px;
       padding: 10px 0px;
       border: none;
@@ -200,5 +235,15 @@ const ItemControl = styled.div`
       background-color: ${ColorObject.basic};
       cursor: pointer;
     }
+  }
+`;
+
+const BuyLink = styled(Link)`
+  text-decoration: none;
+  text-decoration-line: none;
+
+  &:visited,
+  &:active {
+    color: white;
   }
 `;

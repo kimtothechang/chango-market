@@ -3,9 +3,10 @@ import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 import Header from '../components/layouts/Header';
-import OrderList from '../components/order/OrderList';
 import Heading from '../components/common/Heading';
 import ListTitle from '../components/order/ListTitle';
+import OrderList from '../components/order/OrderList';
+import OrderForm from '../components/order/OrderForm';
 import { BASIC_PAGE_WIDTH } from '../constants';
 
 const Order = () => {
@@ -29,6 +30,7 @@ const Order = () => {
           <ListTitle />
           <OrderList data={orderData} />
         </section>
+        <OrderForm />
       </OrderWrapper>
     </OrderLayout>
   );
