@@ -9,6 +9,7 @@ import Join from './pages/Join.jsx';
 import Product from './pages/Product';
 import ScrollToTop from './utils/ScrollToTop';
 import Order from './pages/Order';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/join" element={<Join />} />
         <Route path="/products/:id" element={<Product />} />
         <Route path="/order" element={<Order />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
