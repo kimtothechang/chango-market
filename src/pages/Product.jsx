@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 // Etc
 import { fetcher, fetcherBody } from '../utils/fetcher';
