@@ -1,12 +1,11 @@
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { orderShippingInfo, orderUserInfo, totalPayment, finalOrderInfo } from '../../Atom';
+import { orderShippingInfo, orderUserInfo, totalPayment } from '../../Atom';
 
 import PaymentSummary from './common/PaymentSummary';
 
 import { ColorObject } from '../../constants';
-import { fetcherBody } from '../../utils/fetcher';
 import { BASIC_SERVER_URL } from '../../constants';
 
 const FinalPayment = () => {
@@ -14,7 +13,6 @@ const FinalPayment = () => {
   const userInfo = useRecoilValue(orderUserInfo);
   const [shippingInfo, setShippingInfo] = useRecoilState(orderShippingInfo);
   const [approve, setApprove] = useState(false);
-  const orderInfo = useRecoilValue(finalOrderInfo);
 
   const handleAgree = () => {
     setShippingInfo((current) => {
@@ -25,7 +23,6 @@ const FinalPayment = () => {
   const LiveValidCheck = (data1, data2) => {
     if (!!data1) {
       for (let key in data1) {
-        console.log(`${key} is ${data1[key]}`);
         if (!data1[key]) {
           setApprove(false);
           return;
@@ -34,7 +31,6 @@ const FinalPayment = () => {
     }
     if (!!data2) {
       for (let key in data2) {
-        console.log(`${key} is ${data2[key]}`);
         if (!data2[key]) {
           setApprove(false);
           return;
@@ -45,21 +41,13 @@ const FinalPayment = () => {
     return;
   };
 
-  const sendOrder = async (order, user, price) => {
-    console.log({
-      total_price: price,
-      order_kind: 'cart_order',
-      receiver: user.name,
-      receiver_phone_number: user.phone,
-      address: user.address,
-      address_message: user.message,
-      payment_method: user.payment,
-    });
+  const sendOrder = async (user, price) => {
+    const token = localStorage.getItem('token');
     const res = await fetch(`${BASIC_SERVER_URL}/order/`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
-        Authorization: `JWT ${localStorage.getItem('token')}`,
+        Authorization: `JWT ${token}`,
       },
       body: JSON.stringify({
         total_price: price,
@@ -73,7 +61,15 @@ const FinalPayment = () => {
       }),
     });
 
-    console.log(res);
+    const data = await res.json();
+
+    if (!res.ok) {
+      if (data) {
+        alert('올바른 휴대폰 값을 입력해주세요.');
+      }
+    }
+
+    console.log(data);
   };
 
   useEffect(() => {
@@ -91,11 +87,13 @@ const FinalPayment = () => {
       </div>
       <div>
         <div>
-          <input type="checkbox" checked={shippingInfo.agree} onChange={() => handleAgree()} />
-          <p>주문 내용을 확인하였으며, 정보 제공 등에 동의합니다.</p>
+          <label>
+            <input type="checkbox" checked={shippingInfo.agree} onChange={() => handleAgree()} />
+            주문 내용을 확인하였으며, 정보 제공 등에 동의합니다.
+          </label>
         </div>
         <div>
-          <button onClick={() => sendOrder(orderInfo, shippingInfo, totalPrice)} disabled={!approve}>
+          <button onClick={() => sendOrder(shippingInfo, totalPrice)} disabled={!approve}>
             결제하기
           </button>
         </div>
@@ -125,12 +123,12 @@ const FinalPaymentWrapper = styled.div`
       display: flex;
       align-items: center;
 
-      & > input {
-        margin-right: 10px;
-      }
-      & > p {
+      & > label {
         font-size: 16px;
         font-weight: 400;
+      }
+      & > label > input {
+        margin-right: 10px;
       }
     }
     & > div:last-of-type {
