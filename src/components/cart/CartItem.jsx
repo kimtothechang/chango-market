@@ -26,6 +26,7 @@ const CartItem = ({
   idx,
   quantityProp,
   quantitySet,
+  shippingFee,
 }) => {
   const [productQuantity, setProductQuantity] = useState(0);
   const [payment, setPayment] = useRecoilState(totalPayment);
@@ -35,7 +36,7 @@ const CartItem = ({
       await fetcherBody(`cart/${cartId}/`, 'PUT', {
         product_id: productId,
         quantity: productQuantity + 1,
-        is_active: isActive,
+        is_active: true,
       });
 
       quantitySet(1, idx);
@@ -51,7 +52,7 @@ const CartItem = ({
       await fetcherBody(`cart/${cartId}/`, 'PUT', {
         product_id: productId,
         quantity: productQuantity - 1,
-        is_active: isActive,
+        is_active: true,
       });
       quantitySet(-1, idx);
 
@@ -73,7 +74,7 @@ const CartItem = ({
           <p>{seller}</p>
           <p>{product}</p>
           <p>{price.toLocaleString()}원</p>
-          <p>택배배송 / 무료배성</p>
+          <p>택배배송 / {shippingFee > 0 ? `${shippingFee}원` : '무료 배송'}</p>
         </div>
       </ItemInfo>
       <ItemControl>
@@ -82,7 +83,7 @@ const CartItem = ({
           {/* <AmountControl value={productQuantity} increase={increaseItem} decrease={decreaseItem} /> */}
         </div>
         <div>
-          <p>{(price * productQuantity).toLocaleString()}원</p>
+          <p>{(price * productQuantity + shippingFee).toLocaleString()}원</p>
           <BuyLink
             to="/order"
             state={[{ product_id: productId, image: img, seller_store: seller, product_name: product, amount: productQuantity, price, stock }]}

@@ -7,7 +7,7 @@ import CartItem from './CartItem';
 import PriceInfo from './PriceInfo';
 
 import { BASIC_PAGE_WIDTH, ColorObject } from '../../constants';
-import { fetcher, fetcherAuth } from '../../utils/fetcher';
+import { fetcher, fetcherAuth, fetcherBody } from '../../utils/fetcher';
 import { Link } from 'react-router-dom';
 
 const CartList = () => {
@@ -17,13 +17,53 @@ const CartList = () => {
   const [checkArr, setCheckArr] = useState([]);
   const [allCheck, setAllCheck] = useState(false);
   const [Payment, setPayment] = useRecoilState(totalPayment);
+  const [shippingPrice, setShippingPrice] = useState(0);
   const [orderItems, setOrderItems] = useState([]);
+
+  useEffect(() => {
+    setShippingPrice((current) => {
+      if (productItems.length > 0) {
+        if (productItems.length > 1) {
+          const temp = productItems.reduce((a, b) => a.shipping_fee + b.shipping_fee);
+          return (current = temp);
+        } else {
+          const temp = productItems[0].shipping_fee;
+          return (current = temp);
+        }
+      } else {
+        return 0;
+      }
+    });
+  }, [productItems]);
+
+  useEffect(() => {
+    const presetData = async () => {
+      const res = await getItems();
+
+      setCheckArr((current) => {
+        const temp = [];
+        for (let i = 0; i < res.results.length; i++) {
+          temp.push(res.results[i].is_active);
+        }
+        return temp;
+      });
+      setQuantityState((current) => {
+        const temp = [];
+        for (let i = 0; i < res.results.length; i++) {
+          temp.push(res.results[i].quantity);
+        }
+        return temp;
+      });
+    };
+
+    presetData();
+  }, []);
 
   const getItems = async () => {
     const res = await fetcherAuth('cart/', 'GET');
-    setCartItems((current) => [...current, ...res.results]);
+    setCartItems((current) => (current = [...res.results]));
 
-    return res.results;
+    return res;
   };
 
   const getProduct = async (data) => {
@@ -37,27 +77,14 @@ const CartList = () => {
     }
   };
 
-  const handleCheck = (value) => {
-    setCheckArr((current) => {
-      const temp = current.map((val, idx) => {
-        if (value === idx) {
-          return !val;
-        } else {
-          return val;
-        }
-      });
-      return temp;
-    });
-  };
-
-  const getTotalPrice = (data, multiple) => {
+  const getTotalPrice = (data, multiple, shipment) => {
     const res = data.map((item, idx) => item.price * multiple[idx].quantity);
 
-    if (!!res) {
+    if (res.length > 0) {
       if (res.length > 1) {
-        setPayment((current) => (current = res.reduce((a, b) => a + b)));
+        setPayment((current) => (current = res.reduce((a, b) => a + b) + shipment));
       } else {
-        setPayment((current) => (current = res));
+        setPayment((current) => (current = res[0] + shipment));
       }
     } else {
       setPayment(0);
@@ -93,6 +120,19 @@ const CartList = () => {
     });
   };
 
+  const handleCheck = async (value) => {
+    setCheckArr((current) => {
+      const temp = current.map((val, idx) => {
+        if (value === idx) {
+          return !val;
+        } else {
+          return val;
+        }
+      });
+      return temp;
+    });
+  };
+
   const handleAllCheck = () => {
     setAllCheck((current) => !current);
   };
@@ -110,28 +150,6 @@ const CartList = () => {
       });
     }
   }, [allCheck]);
-
-  useEffect(() => {
-    const presetData = async () => {
-      const res = await getItems();
-      setCheckArr((current) => {
-        const temp = [];
-        for (let i = 0; i < res.length; i++) {
-          temp.push(false);
-        }
-        return temp;
-      });
-      setQuantityState((current) => {
-        const temp = [];
-        for (let i = 0; i < res.length; i++) {
-          temp.push(res[i].quantity);
-        }
-        return temp;
-      });
-    };
-
-    presetData();
-  }, []);
 
   const handleQuantity = (value, idx) => {
     setQuantityState((current) => {
@@ -152,30 +170,45 @@ const CartList = () => {
   }, [cartItems]);
 
   useEffect(() => {
-    getTotalPrice(productItems, cartItems);
-  }, [productItems]);
+    getTotalPrice(productItems, cartItems, shippingPrice);
+  }, [productItems, shippingPrice]);
 
   useEffect(() => {
-    const temp = [];
-    productItems.forEach((val, idx) => {
-      if (checkArr[idx]) {
-        temp.push({ ...val, amount: quantityState[idx] });
+    const updateIsActive = async (value, cartId, productId, productQuantity, index) => {
+      if (cartItems[index].is_active !== value) {
+        const res = await fetcherBody(`cart/${cartId}/`, 'PUT', {
+          product_id: productId,
+          quantity: productQuantity,
+          is_active: value,
+        });
+
+        await updateData();
       }
+    };
+
+    cartItems.forEach(async (value, idx) => {
+      await updateIsActive(checkArr[idx], value.cart_item_id, value.product_id, value.quantity, idx);
     });
 
-    setOrderItems(temp);
+    const updateData = async () => {
+      const res = await getItems();
+    };
+  }, [checkArr]);
+
+  // 최종 주문 정보
+  useEffect(() => {
+    const updateOrderItems = () => {
+      const temp = [];
+      productItems.forEach((val, idx) => {
+        if (checkArr[idx]) {
+          temp.push({ ...val, amount: quantityState[idx] });
+        }
+      });
+      setOrderItems(temp);
+    };
+
+    updateOrderItems();
   }, [checkArr, quantityState]);
-
-  const goPayment = () => {
-    const temp = [];
-    productItems.forEach((val, idx) => {
-      if (checkArr[idx]) {
-        temp.push({ ...val, amount: quantityState[idx] });
-      }
-    });
-
-    setOrderItems(temp);
-  };
 
   return (
     <CartListWrapper>
@@ -211,6 +244,7 @@ const CartList = () => {
               quantityProp={quantityState[idx]}
               quantitySet={handleQuantity}
               idx={idx}
+              shippingFee={item.shipping_fee}
             />
           );
         })}
@@ -224,7 +258,7 @@ const CartList = () => {
         <div>
           <img src={`${process.env.PUBLIC_URL}/assets/icon-plus-line.svg`} alt="" />
         </div>
-        <PriceInfo title="배송비" price={0} />
+        <PriceInfo title="배송비" price={shippingPrice} />
         <div>
           <p>결제 예정 금액</p>
           <p>
@@ -235,7 +269,6 @@ const CartList = () => {
       </TotalPrice>
       <OrderLink to="/order" state={orderItems}>
         <OrderButton>주문하기</OrderButton>
-        {/* <OrderButton onClick={() => goPayment()}>주문하기</OrderButton> */}
       </OrderLink>
     </CartListWrapper>
   );

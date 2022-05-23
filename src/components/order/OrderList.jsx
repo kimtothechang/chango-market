@@ -16,7 +16,7 @@ const CardList = ({ data }) => {
       data.forEach((item) => {
         setState((current) => {
           if (item.stock - item.amount >= 0) {
-            return current + item.price * item.amount;
+            return current + item.price * item.amount + item.shipping_fee;
           } else {
             return current + 0;
           }
@@ -48,7 +48,7 @@ const CardList = ({ data }) => {
               seller={item.seller_store}
               product={item.product_name}
               quantity={item.stock - item.amount >= 0 ? item.amount : `재고 부족, 현재 재고: ${item.stock}`}
-              price={item.stock - item.amount >= 0 ? item.price * item.amount : 0}
+              price={item.stock - item.amount >= 0 ? item.price * item.amount + item.shipping_fee : 0}
               soldout={item.stock - item.amount >= 0}
             />
           ))
