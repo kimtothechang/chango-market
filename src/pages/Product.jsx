@@ -14,6 +14,10 @@ import AmountControl from '../components/common/AmountControl';
 import Contents from '../components/product/Contents';
 import { Link } from 'react-router-dom';
 
+// 구조
+// 📦 Product
+//  ┗ 📜 Contents
+
 const Product = () => {
   const postId = useParams().id;
   const [productData, setProductData] = useState({
@@ -33,15 +37,11 @@ const Product = () => {
     getData();
   }, []);
 
-  const buyNow = () => {
-    console.log('buynow~');
-  };
-
   const addCard = async () => {
     const res = await fetcherBody('cart/', 'POST', {
       product_id: `${postId}`,
       quantity: amount,
-      check: true,
+      is_active: true,
     });
 
     if (res !== undefined) {
@@ -56,6 +56,10 @@ const Product = () => {
   const decrease = (value) => {
     return value !== 1 ? value - 1 : value;
   };
+
+  useEffect(() => {
+    console.log(productData);
+  }, [productData]);
 
   return (
     <ProductContainer>
@@ -72,7 +76,7 @@ const Product = () => {
               {productData.price.toLocaleString()}
               <span>원</span>
             </p>
-            <p>택배배송 / 무료배송</p>
+            <p>택배배송 / {productData.shipping_fee > 0 ? `${productData.shipping_fee}원` : '무료 배송'}</p>
             <AmountWrapper>
               <Line />
               <AmountControl value={amount} increase={() => setAmount((curr) => increase(curr))} decrease={() => setAmount((curr) => decrease(curr))} />

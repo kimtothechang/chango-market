@@ -7,7 +7,25 @@ import Heading from '../components/common/Heading';
 import ListTitle from '../components/order/ListTitle';
 import OrderList from '../components/order/OrderList';
 import OrderForm from '../components/order/OrderForm';
+
 import { BASIC_PAGE_WIDTH } from '../constants';
+
+// 구조
+// 📦 Order
+//  ┣ 📜 Header
+//  ┗ 📜 OrderWrapper
+//    ┣ 📜 section
+//    ┃ ┣ 📜 Heading
+//    ┃ ┣ 📜 ListTitle
+//    ┃ ┗ 📜 OrderList
+//    ┃   ┣ OrderItem
+//    ┃   ┗ p
+//    ┗ 📜 OrderForm
+//      ┣ 📜 DeliveryInfo
+//      ┃ ┣ 📜 Heading
+//      ┃ ┣ 📜 UserInfo
+//      ┃ ┗ 📜 ShippingInfo
+//      ┗ 📜 PaymentInfo
 
 const Order = () => {
   const [orderData, setOrderData] = useState([]);
@@ -16,10 +34,6 @@ const Order = () => {
   useEffect(() => {
     setOrderData(location.state);
   }, [location]);
-
-  // useEffect(() => {
-  //   console.log(orderData);
-  // }, [orderData]);
 
   return (
     <OrderLayout>
