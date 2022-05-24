@@ -28,7 +28,6 @@ const dummyBannerImg = [
 ];
 
 const Banner = () => {
-  // eslint-disable-next-line no-unused-vars
   const [caroucel, setCaroucel] = useState(0);
   const [activeImg, setActiveImg] = useState(1);
 
