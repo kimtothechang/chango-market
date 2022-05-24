@@ -1,98 +1,123 @@
 import styled from '@emotion/styled';
-import { useState, useEffect } from 'react';
-import { useRecoilState } from 'recoil';
-import { totalPayment } from '../../Atom';
 
 import AmountControl from '../common/AmountControl';
 
 import { ColorObject } from '../../constants';
-import { fetcherBody } from '../../utils/fetcher';
-import { Link } from 'react-router-dom';
+import { fetcherBody, fetcherAuth } from '../../utils/fetcher';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { oneOrderState } from '../../Atom';
 
-const CartItem = ({
-  cartId,
-  productId,
-  img,
-  seller,
-  product,
-  price,
-  stock,
-  quantity,
-  isActive,
-  deleteItem,
-  checkedProp,
-  eachCheck,
-  handleCheck,
-  idx,
-  quantityProp,
-  quantitySet,
-  shippingFee,
-}) => {
-  const [productQuantity, setProductQuantity] = useState(0);
-  const [payment, setPayment] = useRecoilState(totalPayment);
+const CartItem = ({ image, seller, name, price, shippingFee, quantity, setState, cartId, productId, stock, isActive }) => {
+  const navigate = useNavigate();
+  const setOneOrder = useSetRecoilState(oneOrderState);
 
   const increaseItem = async () => {
-    if (productQuantity < 99 && productQuantity < stock) {
+    if (quantity + 1 < stock) {
       await fetcherBody(`cart/${cartId}/`, 'PUT', {
         product_id: productId,
-        quantity: productQuantity + 1,
-        is_active: true,
+        quantity: quantity + 1,
+        is_active: isActive,
       });
 
-      quantitySet(1, idx);
-
-      setProductQuantity((current) => current + 1);
-      setPayment((current) => current + price);
+      setState((current) => {
+        const temp = [];
+        for (let product of current) {
+          if (product.cart_item_id === cartId) {
+            temp.push({ ...product, quantity: quantity + 1 });
+          } else {
+            temp.push(product);
+          }
+        }
+        return temp;
+      });
     } else {
-      alert('현재 상품의 재고가 부족합니다.');
+      alert('재고가 부족합니다.');
     }
   };
+
   const decreaseItem = async () => {
-    if (productQuantity > 1) {
+    if (quantity - 1 > 0) {
       await fetcherBody(`cart/${cartId}/`, 'PUT', {
         product_id: productId,
-        quantity: productQuantity - 1,
-        is_active: true,
+        quantity: quantity - 1,
+        is_active: isActive,
       });
-      quantitySet(-1, idx);
-
-      setProductQuantity((current) => current - 1);
-      setPayment((current) => current - price);
+      setState((current) => {
+        const temp = [];
+        for (let product of current) {
+          if (product.cart_item_id === cartId) {
+            temp.push({ ...product, quantity: quantity - 1 });
+          } else {
+            temp.push(product);
+          }
+        }
+        return temp;
+      });
     }
   };
 
-  useEffect(() => {
-    setProductQuantity((current) => (current = quantity));
-  }, [quantity]);
+  const deleteItem = async () => {
+    await fetcherAuth(`cart/${cartId}/`, 'DELETE');
+
+    setState((current) => current.filter((product) => product.cart_item_id !== cartId));
+  };
+
+  const toggleIsActive = async () => {
+    await fetcherBody(`cart/${cartId}/`, 'PUT', {
+      product_id: productId,
+      quantity: quantity,
+      is_active: !isActive,
+    });
+
+    setState((current) => {
+      return current.map((product) => (product.cart_item_id === cartId ? { ...product, is_active: !isActive } : product));
+    });
+  };
+
+  const sendState = async () => {
+    await fetcherBody(`cart/${cartId}/`, 'PUT', {
+      product_id: productId,
+      quantity: quantity,
+      is_active: true,
+    });
+
+    setState((current) => {
+      return current.map((product) => (product.cart_item_id === cartId ? { ...product, is_active: true } : product));
+    });
+
+    setOneOrder({ product_id: productId, quantity, shipping_fee: shippingFee, price });
+
+    navigate('/neworder', {
+      state: {
+        orderProducts: [{ product_id: productId, image, seller_store: seller, product_name: name, quantity, price, stock, shipping_fee: shippingFee }],
+        order_kind: 'cart_one_order',
+      },
+    });
+  };
 
   return (
     <CartItemWrapper>
       <ItemInfo>
-        <input type="checkbox" onChange={() => handleCheck(idx)} checked={checkedProp || eachCheck} />
-        <img src={img} alt="상품 사진" />
+        <input type="checkbox" onChange={() => toggleIsActive()} checked={isActive} />
+        <img src={image} alt="상품 사진" />
         <div>
           <p>{seller}</p>
-          <p>{product}</p>
+          <p>{name}</p>
           <p>{price.toLocaleString()}원</p>
           <p>택배배송 / {shippingFee > 0 ? `${shippingFee}원` : '무료 배송'}</p>
         </div>
       </ItemInfo>
       <ItemControl>
         <div>
-          <AmountControl value={quantityProp} increase={increaseItem} decrease={decreaseItem} />
-          {/* <AmountControl value={productQuantity} increase={increaseItem} decrease={decreaseItem} /> */}
+          <AmountControl value={quantity} increase={increaseItem} decrease={decreaseItem} />
         </div>
         <div>
-          <p>{(price * productQuantity + shippingFee).toLocaleString()}원</p>
-          <BuyLink
-            to="/order"
-            state={[{ product_id: productId, image: img, seller_store: seller, product_name: product, amount: productQuantity, price, stock }]}
-          >
-            <button>주문하기</button>
-          </BuyLink>
+          <p>{(price * quantity + shippingFee).toLocaleString()}원</p>
+          <button onClick={() => sendState()}>주문하기</button>
         </div>
       </ItemControl>
-      <div onClick={() => deleteItem(cartId, idx)}>
+      <div onClick={() => deleteItem()}>
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M4.14209 18.2842L18.2842 4.14204" stroke="#C4C4C4" strokeWidth="2" />
           <path d="M18.1421 18.1421L3.99995 3.99996" stroke="#C4C4C4" strokeWidth="2" />
@@ -225,7 +250,7 @@ const ItemControl = styled.div`
       color: #eb5757;
     }
 
-    & > a > button {
+    & > button {
       width: 130px;
       padding: 10px 0px;
       border: none;

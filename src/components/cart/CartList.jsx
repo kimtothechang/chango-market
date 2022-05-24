@@ -1,221 +1,82 @@
 import styled from '@emotion/styled';
 import { useState, useEffect } from 'react';
-import { useRecoilState } from 'recoil';
-import { totalPayment } from '../../Atom';
 
 import CartItem from './CartItem';
 import PriceInfo from './PriceInfo';
 
 import { BASIC_PAGE_WIDTH, ColorObject } from '../../constants';
-import { fetcher, fetcherAuth, fetcherBody } from '../../utils/fetcher';
+import { fetcher, fetcherAuth } from '../../utils/fetcher';
 import { Link } from 'react-router-dom';
 
 const CartList = () => {
-  const [cartItems, setCartItems] = useState([]);
-  const [productItems, setProductItems] = useState([]);
-  const [quantityState, setQuantityState] = useState([]);
-  const [checkArr, setCheckArr] = useState([]);
-  const [allCheck, setAllCheck] = useState(false);
-  const [Payment, setPayment] = useRecoilState(totalPayment);
+  const [products, setProducts] = useState([]);
+  const [productsPrice, setProductsPrice] = useState(0);
   const [shippingPrice, setShippingPrice] = useState(0);
-  const [orderItems, setOrderItems] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [orderProducts, setOrderProducts] = useState([]);
 
-  useEffect(() => {
-    setShippingPrice((current) => {
-      if (productItems.length > 0) {
-        if (productItems.length > 1) {
-          const temp = productItems.reduce((a, b) => a.shipping_fee + b.shipping_fee);
-          return (current = temp);
-        } else {
-          const temp = productItems[0].shipping_fee;
-          return (current = temp);
-        }
-      } else {
-        return 0;
-      }
-    });
-  }, [productItems]);
-
+  // 최초 페이지 접근 시 장바구니 내 상품 정보 불러오기
   useEffect(() => {
     const presetData = async () => {
-      const res = await getItems();
-
-      setCheckArr((current) => {
-        const temp = [];
-        for (let i = 0; i < res.results.length; i++) {
-          temp.push(res.results[i].is_active);
-        }
-        return temp;
-      });
-      setQuantityState((current) => {
-        const temp = [];
-        for (let i = 0; i < res.results.length; i++) {
-          temp.push(res.results[i].quantity);
-        }
-        return temp;
-      });
+      const cartInfo = await fetcherAuth('cart/', 'GET');
+      const productInfo = [];
+      for (let product of cartInfo.results) {
+        const res = await fetcher(`products/${product.product_id}`, 'GET');
+        productInfo.push({ ...product, ...res });
+      }
+      setProducts(productInfo);
     };
 
     presetData();
   }, []);
 
-  const getItems = async () => {
-    const res = await fetcherAuth('cart/', 'GET');
-    setCartItems((current) => (current = [...res.results]));
+  const getProductsPrice = (products) => {
+    let total = 0;
+    if (products !== []) {
+      for (let product of products) {
+        total += product.price * product.quantity;
+      }
+    }
 
-    return res;
+    return total;
+  };
+  const getShippingPrice = (products) => {
+    let total = 0;
+    if (products !== []) {
+      for (let product of products) {
+        total += product.shipping_fee;
+      }
+    }
+
+    return total;
+  };
+  const getTotalPrice = (products) => {
+    const total = getProductsPrice(products) + getShippingPrice(products);
+
+    return total;
   };
 
-  const getProduct = async (data) => {
-    if (!!data[0]) {
-      const arr = [];
-      for (let product of data) {
-        const res = await fetcher(`products/${product.product_id}`, 'GET');
-        arr.push({ ...res });
-      }
-      setProductItems([...arr]);
+  const getOrderProducts = (products) => {
+    if (products !== []) {
+      const temp = products.filter((product) => product.is_active);
+
+      return temp;
     }
   };
 
-  const getTotalPrice = (data, multiple, shipment) => {
-    const res = data.map((item, idx) => item.price * multiple[idx].quantity);
-
-    if (res.length > 0) {
-      if (res.length > 1) {
-        setPayment((current) => (current = res.reduce((a, b) => a + b) + shipment));
-      } else {
-        setPayment((current) => (current = res[0] + shipment));
-      }
-    } else {
-      setPayment(0);
-    }
-  };
-
-  const deleteItem = async (cartId, idx) => {
-    await fetcherAuth(`cart/${cartId}/`, 'DELETE');
-
-    setCartItems((current) =>
-      current.filter((item) => {
-        return cartId !== item.cart_item_id;
-      })
-    );
-    setCheckArr((current) => {
-      const temp = [];
-      for (let i = 0; i < current.length; i++) {
-        if (i !== idx) {
-          temp.push(current[i]);
-        }
-      }
-      return temp;
-    });
-
-    setQuantityState((current) => {
-      const temp = [];
-      for (let i = 0; i < current.length; i++) {
-        if (i !== idx) {
-          temp.push(current[i]);
-        }
-      }
-      return temp;
-    });
-  };
-
-  const handleCheck = async (value) => {
-    setCheckArr((current) => {
-      const temp = current.map((val, idx) => {
-        if (value === idx) {
-          return !val;
-        } else {
-          return val;
-        }
-      });
-      return temp;
-    });
-  };
-
-  const handleAllCheck = () => {
-    setAllCheck((current) => !current);
-  };
-
   useEffect(() => {
-    if (allCheck === true) {
-      setCheckArr((current) => {
-        const temp = current.map((val) => (val ? val : true));
-        return temp;
-      });
-    } else {
-      setCheckArr((current) => {
-        const temp = current.map((val) => (val ? false : val));
-        return temp;
-      });
-    }
-  }, [allCheck]);
-
-  const handleQuantity = (value, idx) => {
-    setQuantityState((current) => {
-      const temp = [];
-      current.forEach((val, i) => {
-        if (i === idx) {
-          temp.push(current[i] + value);
-        } else {
-          temp.push(current[i]);
-        }
-      });
-      return temp;
-    });
-  };
-
-  useEffect(() => {
-    getProduct(cartItems);
-  }, [cartItems]);
-
-  useEffect(() => {
-    getTotalPrice(productItems, cartItems, shippingPrice);
-  }, [productItems, shippingPrice]);
-
-  useEffect(() => {
-    const updateIsActive = async (value, cartId, productId, productQuantity, index) => {
-      if (cartItems[index].is_active !== value) {
-        const res = await fetcherBody(`cart/${cartId}/`, 'PUT', {
-          product_id: productId,
-          quantity: productQuantity,
-          is_active: value,
-        });
-
-        await updateData();
-      }
-    };
-
-    cartItems.forEach(async (value, idx) => {
-      await updateIsActive(checkArr[idx], value.cart_item_id, value.product_id, value.quantity, idx);
-    });
-
-    const updateData = async () => {
-      const res = await getItems();
-    };
-  }, [checkArr]);
-
-  // 최종 주문 정보
-  useEffect(() => {
-    const updateOrderItems = () => {
-      const temp = [];
-      productItems.forEach((val, idx) => {
-        if (checkArr[idx]) {
-          temp.push({ ...val, amount: quantityState[idx] });
-        }
-      });
-      setOrderItems(temp);
-    };
-
-    updateOrderItems();
-  }, [checkArr, quantityState]);
+    setProductsPrice(getProductsPrice(products));
+    setShippingPrice(getShippingPrice(products));
+    setTotalPrice(getTotalPrice(products));
+    setOrderProducts(getOrderProducts(products));
+  }, [products]);
 
   return (
     <CartListWrapper>
       <h2>장바구니</h2>
       <CartListHeader>
         <div>
-          <input type="checkbox" onChange={handleAllCheck} checked={allCheck} />
+          <input type="checkbox" />
           <p>상품정보</p>
         </div>
         <div>
@@ -224,33 +85,25 @@ const CartList = () => {
         </div>
       </CartListHeader>
       <CartMain>
-        {productItems.map((item, idx) => {
-          return (
-            <CartItem
-              key={item.product_id}
-              img={item.image}
-              seller={item.seller_store}
-              product={item.product_name}
-              price={item.price}
-              stock={item.stock}
-              quantity={cartItems[idx] ? cartItems[idx].quantity : '0'}
-              cartId={cartItems[idx] ? cartItems[idx].cart_item_id : 0}
-              productId={cartItems[idx] ? cartItems[idx].product_id : 0}
-              isActive={cartItems[idx] ? cartItems[idx].is_active : false}
-              deleteItem={deleteItem}
-              checkedProp={allCheck}
-              eachCheck={checkArr[idx]}
-              handleCheck={handleCheck}
-              quantityProp={quantityState[idx]}
-              quantitySet={handleQuantity}
-              idx={idx}
-              shippingFee={item.shipping_fee}
-            />
-          );
-        })}
+        {products.map((product) => (
+          <CartItem
+            key={product.product_id}
+            image={product.image}
+            seller={product.seller_store}
+            name={product.product_name}
+            price={product.price}
+            shippingFee={product.shipping_fee}
+            quantity={product.quantity}
+            setState={setProducts}
+            cartId={product.cart_item_id}
+            productId={product.product_id}
+            stock={product.stock}
+            isActive={product.is_active}
+          />
+        ))}
       </CartMain>
       <TotalPrice>
-        <PriceInfo title="총 상품금액" price={Payment} />
+        <PriceInfo title="총 상품금액" price={productsPrice} />
         <div>
           <img src={`${process.env.PUBLIC_URL}/assets/icon-minus-line.svg`} alt="" />
         </div>
@@ -262,12 +115,12 @@ const CartList = () => {
         <div>
           <p>결제 예정 금액</p>
           <p>
-            {Payment.toLocaleString()}
+            {totalPrice.toLocaleString()}
             <span>원</span>
           </p>
         </div>
       </TotalPrice>
-      <OrderLink to="/order" state={orderItems}>
+      <OrderLink to="/neworder" state={{ orderProducts, order_kind: 'cart_order' }}>
         <OrderButton>주문하기</OrderButton>
       </OrderLink>
     </CartListWrapper>
