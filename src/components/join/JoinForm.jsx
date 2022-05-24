@@ -50,9 +50,9 @@ const ERROR_MESSAGE = {
 };
 
 const JoinForm = () => {
+  const joinType = useRecoilValue(joinTypeState);
   const [joinInfo, setJoinInfo] = useRecoilState(joinState);
   const [joinValid, setJoinValid] = useRecoilState(joinValidState);
-  const joinType = useRecoilValue(joinTypeState);
   const [error, setError] = useState('');
   const [errorCompany, setErrorCompany] = useState('');
   const [samePw, setSamePw] = useState('');
@@ -107,43 +107,57 @@ const JoinForm = () => {
     setJoinInfo((current) => {
       return { ...current, [what]: e.target.value };
     });
-    if (joinInfo.name.length > 0) {
-      setJoinValid((current) => {
-        return { ...current, name: true };
-      });
-    } else {
-      setJoinValid((current) => {
-        return { ...current, name: false };
-      });
-    }
   };
+
+  useEffect(() => {
+    liveValidCheck('name');
+  }, [joinInfo.name]);
+
+  useEffect(() => console.log(joinValid), [joinValid]);
 
   // phone 각 인풋을 이용한 실시간 업데이트
   useEffect(() => {
     setJoinInfo((current) => {
       return { ...current, phone: current.phone1 + current.phone2 + current.phone3 };
     });
-    liveValidCheck('phone');
   }, [joinInfo.phone1, joinInfo.phone2, joinInfo.phone3]);
+
+  // phone 유효성 검사
+  useEffect(() => {
+    liveValidCheck('phone');
+  }, [joinInfo.phone]);
 
   // email 각 인풋을 이용한 실시간 업데이트
   useEffect(() => {
     setJoinInfo((current) => {
       return { ...current, email: current.email1 + '@' + current.email2 };
     });
-    liveValidCheck('email');
   }, [joinInfo.email1, joinInfo.email2]);
+
+  useEffect(() => {
+    liveValidCheck('email');
+  }, [joinInfo.email]);
 
   // 사업자 등록번호
   useEffect(() => {
     liveValidCheck('company');
-    if (error === ERROR_MESSAGE.company.ok || error === ERROR_MESSAGE.company.same) {
+    if (errorCompany === ERROR_MESSAGE.company.ok || errorCompany === ERROR_MESSAGE.company.same) {
       setErrorCompany((current) => (current = ERROR_MESSAGE.company.check));
     }
     setJoinValid((current) => {
       return { ...current, companyCheck: false };
     });
   }, [joinInfo.company]);
+
+  useEffect(() => {
+    setErrorCompany((current) => {
+      if (joinValid.company) {
+        return ERROR_MESSAGE.company.check;
+      } else {
+        return ERROR_MESSAGE.company.valid;
+      }
+    });
+  }, [joinValid.company]);
 
   // 스토어 이름 실시간 유효성 검사
   useEffect(() => {
@@ -190,8 +204,6 @@ const JoinForm = () => {
     });
 
     const data = await res.json();
-
-    console.log(data);
 
     // ID 중복 검사일 경우
     if (type === 'id') {
