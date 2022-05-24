@@ -148,3 +148,18 @@ export const orderShippingInfo = atom({
     agree: false,
   },
 });
+
+export const orderKindInfo = atom({
+  key: 'orderKindInfo',
+  default: '',
+});
+
+export const oneOrderState = atom({
+  key: 'oneOrderState',
+  default: {
+    product_id: 0,
+    quantity: 0,
+    shipping_fee: 0,
+    price: 0,
+  },
+});
