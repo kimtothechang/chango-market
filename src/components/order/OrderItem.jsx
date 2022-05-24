@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const CardItem = ({ img, seller, product, quantity, price, soldout }) => {
+const OrderItem = ({ img, seller, product, quantity, price, soldout }) => {
   return (
     <ItemWrapper soldout={soldout}>
       <div>
@@ -20,7 +20,7 @@ const CardItem = ({ img, seller, product, quantity, price, soldout }) => {
   );
 };
 
-export default CardItem;
+export default OrderItem;
 
 const ItemWrapper = styled.li`
   display: flex;

@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 
 import DeliveryInfo from './DeliveryInfo';
 import PaymentInfo from './PaymentInfo';
-import PostSearch from './PostSearch';
 
 const OrderForm = () => {
   return (

@@ -1,58 +1,40 @@
 import styled from '@emotion/styled';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
-import { finalOrderInfo, totalPayment } from '../../Atom';
+import { totalPayment } from '../../Atom';
 
 import OrderItem from './OrderItem';
 
-const CardList = ({ data }) => {
-  const [product, setProduct] = useState([]);
-  const [orderInfo, setOrderInfo] = useRecoilState(finalOrderInfo);
-  const [totalPrice, setTotalPrice] = useState(0);
-  const [totalFee, setTotalFee] = useRecoilState(totalPayment);
+const NewCardList = ({ products }) => {
+  const [totalPrice, setTotalPrice] = useRecoilState(totalPayment);
 
-  const calculateTotalPrice = (data, setState) => {
-    if (!!data) {
-      data.forEach((item) => {
-        setState((current) => {
-          if (item.stock - item.amount >= 0) {
-            return current + item.price * item.amount + item.shipping_fee;
-          } else {
-            return current + 0;
-          }
-        });
-      });
+  const getTotalPrice = (products) => {
+    let temp = 0;
+    if (products !== []) {
+      for (let product of products) {
+        temp += product.price * product.quantity + product.shipping_fee;
+      }
     }
+    return temp;
   };
 
   useEffect(() => {
-    setProduct(data);
-    setOrderInfo(data);
-
-    if (data !== []) {
-      calculateTotalPrice(data, setTotalPrice);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    setTotalFee(totalPrice);
-  }, [totalPrice]);
+    setTotalPrice(getTotalPrice(products));
+  }, [products]);
 
   return (
     <ListWrapper>
-      {!!product
-        ? product.map((item) => (
-            <OrderItem
-              key={item.product_id}
-              img={item.image}
-              seller={item.seller_store}
-              product={item.product_name}
-              quantity={item.stock - item.amount >= 0 ? item.amount : `재고 부족, 현재 재고: ${item.stock}`}
-              price={item.stock - item.amount >= 0 ? item.price * item.amount + item.shipping_fee : 0}
-              soldout={item.stock - item.amount >= 0}
-            />
-          ))
-        : ''}
+      {products.map((item) => (
+        <OrderItem
+          key={item.product_id}
+          img={item.image}
+          seller={item.seller_store}
+          product={item.product_name}
+          quantity={item.stock - item.quantity >= 0 ? item.quantity : `재고 부족, 현재 재고: ${item.stock}`}
+          price={item.stock - item.quantity >= 0 ? item.price * item.quantity + item.shipping_fee : 0}
+          soldout={item.stock - item.quantity >= 0}
+        />
+      ))}
       <p>
         총 주문금액<span>{totalPrice.toLocaleString()}원</span>
       </p>
@@ -60,7 +42,7 @@ const CardList = ({ data }) => {
   );
 };
 
-export default CardList;
+export default NewCardList;
 
 const ListWrapper = styled.ul`
   & > p:last-of-type {

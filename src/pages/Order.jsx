@@ -9,30 +9,20 @@ import OrderList from '../components/order/OrderList';
 import OrderForm from '../components/order/OrderForm';
 
 import { BASIC_PAGE_WIDTH } from '../constants';
-
-// 구조
-// 📦 Order
-//  ┣ 📜 Header
-//  ┗ 📜 OrderWrapper
-//    ┣ 📜 section
-//    ┃ ┣ 📜 Heading
-//    ┃ ┣ 📜 ListTitle
-//    ┃ ┗ 📜 OrderList
-//    ┃   ┣ OrderItem
-//    ┃   ┗ p
-//    ┗ 📜 OrderForm
-//      ┣ 📜 DeliveryInfo
-//      ┃ ┣ 📜 Heading
-//      ┃ ┣ 📜 UserInfo
-//      ┃ ┗ 📜 ShippingInfo
-//      ┗ 📜 PaymentInfo
+import { useSetRecoilState } from 'recoil';
+import { orderKindInfo } from '../Atom';
 
 const Order = () => {
-  const [orderData, setOrderData] = useState([]);
+  const [orderData, setOrderData] = useState({
+    orderProducts: [],
+    order_kind: '',
+  });
   const location = useLocation();
+  const setOrderKindInfo = useSetRecoilState(orderKindInfo);
 
   useEffect(() => {
     setOrderData(location.state);
+    setOrderKindInfo(location.state.order_kind);
   }, [location]);
 
   return (
@@ -42,7 +32,7 @@ const Order = () => {
         <section>
           <Heading title="주문/결제하기" />
           <ListTitle />
-          <OrderList data={orderData} />
+          <OrderList products={orderData.orderProducts} />
         </section>
         <OrderForm />
       </OrderWrapper>
