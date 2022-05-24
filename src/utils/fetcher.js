@@ -58,10 +58,6 @@ const fetcherBody = async (param, method, content) => {
       body: JSON.stringify({ ...content }),
     });
 
-    if (!res.ok) {
-      throw new Error('현재 상품의 재고가 없습니다.');
-    }
-
     const data = await res.json();
 
     return data;
