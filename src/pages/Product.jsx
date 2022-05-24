@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 // Etc
 import { fetcher, fetcherBody } from '../utils/fetcher';
-import { BASIC_PAGE_WIDTH, ColorObject } from '../constants';
+import { BASIC_PAGE_WIDTH, BASIC_SERVER_URL, ColorObject } from '../constants';
 
 // Components
 import Header from '../components/layouts/Header';
@@ -13,21 +13,21 @@ import MiddleButton from '../components/button/MiddleButton';
 import AmountControl from '../components/common/AmountControl';
 import Contents from '../components/product/Contents';
 import { Link } from 'react-router-dom';
-
-// 구조
-// 📦 Product
-//  ┗ 📜 Contents
+import { useRecoilState } from 'recoil';
+import { oneOrderState } from '../Atom';
 
 const Product = () => {
+  const navigate = useNavigate();
   const postId = useParams().id;
   const [productData, setProductData] = useState({
     price: 0,
   });
   const [amount, setAmount] = useState(1);
+  const [oneOrder, setOneOrder] = useRecoilState(oneOrderState);
+  const [isSoldOut, setIsSoldOut] = useState('');
 
   const getData = async () => {
     const res = await fetcher(`products/${postId}`, 'GET');
-
     setProductData((current) => {
       return { ...current, ...res };
     });
@@ -35,31 +35,85 @@ const Product = () => {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [postId]);
 
   const addCard = async () => {
-    const res = await fetcherBody('cart/', 'POST', {
-      product_id: `${postId}`,
-      quantity: amount,
-      is_active: true,
-    });
+    if (productData.stock >= amount) {
+      const url = BASIC_SERVER_URL;
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${url}/cart/`, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+          Authorization: `JWT ${token}`,
+        },
+        body: JSON.stringify({ product_id: `${postId}`, quantity: amount, is_active: true }),
+      });
 
-    if (res !== undefined) {
-      alert('장바구니에 추가되었습니다.');
+      if (!res.ok && res.status === 401) {
+        alert('로그인 후 이용해주세요.');
+        return;
+      }
+
+      const data = await res.json();
+
+      if (data !== undefined) {
+        alert('장바구니에 추가되었습니다.');
+      }
+    } else {
+      alert('상품 재고가 부족합니다.');
     }
   };
 
-  const increase = (value) => {
-    return value !== 99 ? value + 1 : value;
+  const increaseItem = (stock) => {
+    setAmount((current) => {
+      if (current < stock) {
+        setIsSoldOut('');
+        return current + 1;
+      } else {
+        setIsSoldOut(`상품 재고가 부족합니다. 현재 재고: ${productData.stock}개`);
+        return current;
+      }
+    });
   };
 
-  const decrease = (value) => {
-    return value !== 1 ? value - 1 : value;
+  const decreaseItem = () => {
+    setAmount((current) => {
+      if (current > 1) {
+        setIsSoldOut('');
+        return current - 1;
+      } else {
+        setIsSoldOut('');
+        return current;
+      }
+    });
   };
 
-  useEffect(() => {
-    console.log(productData);
-  }, [productData]);
+  const sendOrder = () => {
+    if (localStorage.getItem('token')) {
+      setOneOrder({ product_id: productData.product_id, quantity: amount, shipping_fee: productData.shipping_fee, price: productData.price });
+
+      navigate('/order', {
+        state: {
+          orderProducts: [
+            {
+              product_id: productData.product_id,
+              image: productData.image,
+              seller_store: productData.seller_store,
+              product_name: productData.name,
+              quantity: amount,
+              price: productData.price,
+              stock: productData.stock,
+              shipping_fee: productData.shipping_fee,
+            },
+          ],
+          order_kind: 'direct_order',
+        },
+      });
+    } else {
+      alert('로그인 후 이용해주세요.');
+    }
+  };
 
   return (
     <ProductContainer>
@@ -79,7 +133,10 @@ const Product = () => {
             <p>택배배송 / {productData.shipping_fee > 0 ? `${productData.shipping_fee}원` : '무료 배송'}</p>
             <AmountWrapper>
               <Line />
-              <AmountControl value={amount} increase={() => setAmount((curr) => increase(curr))} decrease={() => setAmount((curr) => decrease(curr))} />
+              <div>
+                <AmountControl value={amount} increase={() => increaseItem(productData.stock)} decrease={() => decreaseItem()} />
+                <p>{isSoldOut}</p>
+              </div>
               <Line />
             </AmountWrapper>
             <TotalWrapper>
@@ -98,9 +155,7 @@ const Product = () => {
               </div>
             </TotalWrapper>
             <HeaderButtonWrapper>
-              <BuyLink to="/order" state={[{ ...productData, amount }]}>
-                <BuyButton>바로 구매</BuyButton>
-              </BuyLink>
+              <BuyButton onClick={() => sendOrder()}>바로 구매</BuyButton>
               <MiddleButton text="장바구니" onClick={addCard} color="#767676" />
             </HeaderButtonWrapper>
           </div>
@@ -127,6 +182,20 @@ const ProductWrapper = styled.section`
 const AmountWrapper = styled.div`
   & > div:first-of-type {
     margin-bottom: 20px;
+  }
+
+  & > div:nth-of-type(2) {
+    display: flex;
+    align-items: center;
+
+    & > div {
+      margin-right: 32px;
+    }
+
+    & > p {
+      color: red;
+      font-weight: 500;
+    }
   }
 
   & > div:last-of-type {
@@ -243,7 +312,7 @@ const ProductHeader = styled.header`
 const HeaderButtonWrapper = styled.div`
   display: flex;
 
-  & > a:first-of-type {
+  & > button:first-of-type {
     margin-right: 14px;
   }
 `;
