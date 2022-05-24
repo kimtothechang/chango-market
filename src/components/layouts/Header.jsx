@@ -27,8 +27,6 @@ const Header = () => {
   const goCart = useCallback(() => {
     if (logined) {
       navigate('/cart');
-    } else {
-      alert('로그인을 먼저 진행해주세요.');
     }
   }, [logined]);
 
@@ -64,12 +62,12 @@ const Header = () => {
           <SearchInput type="text" value={searchValue} placeholder="상품을 검색해보세요" onChange={onChangeSearch} />
         </SearchWrapper>
         <IconWrapper>
-          <IconButton onClick={goCart} text="장바구니" src={`${process.env.PUBLIC_URL}/assets/icon-shopping-cart.svg`} />
           {logined ? (
             <IconButton onClick={switchToggle} text="마이페이지" src={`${process.env.PUBLIC_URL}/assets/icon-user.svg`} />
           ) : (
             <IconButton onClick={goLogin} text="로그인" src={`${process.env.PUBLIC_URL}/assets/icon-user.svg`} />
           )}
+          {logined ? <IconButton onClick={goCart} text="장바구니" src={`${process.env.PUBLIC_URL}/assets/icon-shopping-cart.svg`} /> : null}
           {logined ? (
             <MyPage toggle={toggle}>
               <p>마이페이지</p>
