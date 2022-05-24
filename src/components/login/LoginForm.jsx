@@ -75,18 +75,21 @@ const LoginForm = () => {
       localStorage.setItem('id', id);
       localStorage.setItem('token', data.token);
       // setLogin(true);
-      console.log('seLogined before');
       setLogined((current) => {
-        console.log('seLOgined ing', !current);
         return !current;
       });
-      console.log('seLogined after');
       navigate('/');
     }
   };
 
+  const onCheckEnter = (e) => {
+    if (e.key === 'Enter') {
+      Login();
+    }
+  };
+
   return (
-    <InputWrapper>
+    <InputWrapper onKeyPress={onCheckEnter}>
       <LoginInput type="text" placeholder="아이디" value={loginInfo.id} onChange={onChangeID} />
       <LoginInput type="password" placeholder="비밀번호" value={loginInfo.pw} onChange={onChangePW} />
       <Warning warning={errorMessage}>{ERROR_MESSAGE[errorMessage]}</Warning>
