@@ -263,13 +263,3 @@ const ItemControl = styled.div`
     }
   }
 `;
-
-const BuyLink = styled(Link)`
-  text-decoration: none;
-  text-decoration-line: none;
-
-  &:visited,
-  &:active {
-    color: white;
-  }
-`;

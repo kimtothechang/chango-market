@@ -1,12 +1,12 @@
+import MainTemplate from '../components/layouts/MainTemplate';
 import Header from '../components/layouts/Header';
-import CartList from '../components/cart/CartList';
+import CartContainer from '../container/CartContainer';
 
 const Cart = () => {
   return (
-    <main>
-      <Header />
-      <CartList />
-    </main>
+    <MainTemplate header={<Header />}>
+      <CartContainer />
+    </MainTemplate>
   );
 };
 

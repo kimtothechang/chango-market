@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { myPageToggle } from '../../Atom';
 
-import IconButton from '../common/IconButton';
+import IconButton from './header/IconButton';
 
 import { BASIC_PAGE_WIDTH, ColorObject } from '../../constants';
 import { useEffect } from 'react';

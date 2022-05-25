@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-
 import { memo } from 'react';
 
 const ValueEqual = (prevProps, nextProps) => {

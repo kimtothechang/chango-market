@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { memo } from 'react';
 
-import { ColorObject } from '../../constants';
+import { ColorObject } from '../../../constants';
 
 const ValueEqual = (prevProps, nextProps) => {
   return prevProps.value === nextProps.value && prevProps.valid === nextProps.valid;

@@ -1,35 +1,53 @@
 import styled from '@emotion/styled';
 import { useState, useEffect } from 'react';
 import { ColorObject } from '../../constants';
+import { useParams } from 'react-router';
+import { fetcher } from '../../utils/fetcher';
 
-const Contents = ({ info, review, qna, takeBack }) => {
+const Contents = () => {
+  const postId = useParams().id;
   const [clicked, setClicked] = useState(1);
+  const [productData, setProductData] = useState({
+    info: '상세 설명이 없습니다.',
+    review: '작성된 리뷰가 없습니다.',
+    qna: '작성된 Q&A가 없습니다.',
+    takeBack: '반품 및 교환이 불가능한 상품입니다.',
+  });
+
+  useEffect(() => {
+    const presetData = async () => {
+      const res = await fetcher(`products/${postId}`, 'GET');
+      setProductData((current) => {
+        return { ...current, ...res };
+      });
+    };
+
+    presetData();
+  }, [postId]);
 
   const changeContents = (value) => {
-    setClicked((current) => (current = value));
+    setClicked(value);
   };
 
-  const putContent = (clciked) => {
-    if (clicked === 1) {
-      return info;
-    } else if (clicked === 2) {
-      return review;
-    } else if (clicked === 3) {
-      return qna;
-    } else {
-      return takeBack;
+  const putContent = (clcik) => {
+    if (clcik === 1) {
+      return productData.product_info;
+    } else if (clcik === 2) {
+      return productData.review;
+    } else if (clcik === 3) {
+      return productData.qna;
+    } else if (clcik === 4) {
+      return productData.takeBack;
     }
   };
-
-  useEffect(() => {}, [clicked]);
 
   return (
     <ContentsWrapper>
       <MainButtonWrapper clicked={clicked}>
-        <button onClick={() => changeContents(1, 'info')}>설명</button>
-        <button onClick={() => changeContents(2, 'review')}>리뷰</button>
-        <button onClick={() => changeContents(3, 'qna')}>Q&A</button>
-        <button onClick={() => changeContents(4, 'takeBack')}>반품/교환정보</button>
+        <button onClick={() => changeContents(1)}>설명</button>
+        <button onClick={() => changeContents(2)}>리뷰</button>
+        <button onClick={() => changeContents(3)}>Q&A</button>
+        <button onClick={() => changeContents(4)}>반품/교환정보</button>
       </MainButtonWrapper>
       <MainContent>{putContent(clicked)}</MainContent>
     </ContentsWrapper>

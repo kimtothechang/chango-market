@@ -1,16 +1,13 @@
-import ItemList from '../components/home/ItemList';
-import Banner from '../components/home/banner/Banner';
+import MainTemplate from '../components/layouts/MainTemplate';
 import Header from '../components/layouts/Header';
 import Footer from '../components/layouts/Footer';
+import HomeContainer from '../container/HomeContainer';
 
 const Home = () => {
   return (
-    <main>
-      <Header />
-      <Banner />
-      <ItemList />
-      <Footer />
-    </main>
+    <MainTemplate header={<Header />} footer={<Footer />}>
+      <HomeContainer />
+    </MainTemplate>
   );
 };
 
