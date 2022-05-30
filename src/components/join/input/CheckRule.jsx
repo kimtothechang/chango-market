@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { joinSellerValidState, joinValidState } from '../../store';
+import { joinSellerValidState, joinValidState } from '../../Atom';
 
 const CheckRule = () => {
   const [isChecked, setIsChecked] = useState(false);

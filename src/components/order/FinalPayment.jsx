@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { oneOrderState, orderKindInfo, orderShippingInfo, orderUserInfo, totalPayment } from '../../Atom';
+import { orderShippingInfo, orderUserInfo, orderKindInfo, oneOrderState, totalPayment } from '../../store';
 
 import PaymentSummary from './common/PaymentSummary';
 

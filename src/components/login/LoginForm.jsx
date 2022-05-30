@@ -2,7 +2,7 @@ import { useState, memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from '@emotion/styled';
-import { joinTypeState, loginInfoState, loginState } from '../../Atom';
+import { joinTypeState, loginInfoState, loginState } from '../../store';
 
 import LoginInput from './LoginInput';
 import { BASIC_SERVER_URL, ERROR_MESSAGE, ColorObject } from '../../constants';

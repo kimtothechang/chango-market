@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { oneOrderState } from '../../Atom';
+import { oneOrderState } from '../../store';
 
 // Etc
 import { fetcher } from '../../utils/fetcher';

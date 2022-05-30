@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
-import { memo, useCallback, useRef } from 'react';
+import { memo } from 'react';
 
 import LongInput from './input/LongInput';
 import ShortInput from './input/ShortInput';
 import MiddleInput from './input/MiddleInput';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { joinState, joinValidState, joinTypeState } from '../../Atom';
+import { joinState, joinValidState, joinTypeState } from '../../store';
 import { useState, useEffect } from 'react';
 
 import { BASIC_SERVER_URL, regxObj } from '../../constants';

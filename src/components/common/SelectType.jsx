@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
-import { useEffect, memo } from 'react';
+import { memo } from 'react';
 
 import { useRecoilState } from 'recoil';
-import { joinTypeState } from '../../Atom';
+import { joinTypeState } from '../../store';
 
 const SelectType = ({ leftText, rightText }) => {
   const [joinType, setJoinType] = useRecoilState(joinTypeState);

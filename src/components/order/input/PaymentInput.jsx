@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
-import { orderShippingInfo } from '../../../Atom';
+import { orderShippingInfo } from '../../../store';
 
 const PaymentInput = () => {
   const setShippingInfo = useSetRecoilState(orderShippingInfo);

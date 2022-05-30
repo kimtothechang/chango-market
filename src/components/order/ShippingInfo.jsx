@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
-import { orderShippingInfo } from '../../Atom';
-import DaumPostcode from 'react-daum-postcode';
+import { orderShippingInfo } from '../../store';
 
 import Heading3 from './common/Heading3';
 import AddressInput from './input/AddressInput';

@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
-import { useCallback, memo, useEffect } from 'react';
+import { useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useRecoilValue } from 'recoil';
-import { joinState, joinTypeState, joinValidState } from '../../Atom';
+import { joinState, joinTypeState, joinValidState } from '../../store';
 
 import { BASIC_SERVER_URL, ColorObject } from '../../constants';
 

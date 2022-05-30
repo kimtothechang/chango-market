@@ -1,7 +1,6 @@
-import styled from '@emotion/styled';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
-import { orderUserInfo } from '../../Atom';
+import { orderUserInfo } from '../../store';
 
 import Heading3 from './common/Heading3';
 import MiddleInput from './input/MiddleInput';

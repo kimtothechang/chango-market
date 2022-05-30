@@ -2,8 +2,7 @@ import styled from '@emotion/styled';
 import { useState, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { myPageToggle } from '../../Atom';
-
+import { myPageToggle } from '../../store';
 import IconButton from './header/IconButton';
 
 import { BASIC_PAGE_WIDTH, ColorObject } from '../../constants';
@@ -62,12 +61,12 @@ const Header = () => {
           <SearchInput type="text" value={searchValue} placeholder="상품을 검색해보세요" onChange={onChangeSearch} />
         </SearchWrapper>
         <IconWrapper>
+          {logined ? <IconButton onClick={goCart} text="장바구니" src={`${process.env.PUBLIC_URL}/assets/icon-shopping-cart.svg`} /> : null}
           {logined ? (
             <IconButton onClick={switchToggle} text="마이페이지" src={`${process.env.PUBLIC_URL}/assets/icon-user.svg`} />
           ) : (
             <IconButton onClick={goLogin} text="로그인" src={`${process.env.PUBLIC_URL}/assets/icon-user.svg`} />
           )}
-          {logined ? <IconButton onClick={goCart} text="장바구니" src={`${process.env.PUBLIC_URL}/assets/icon-shopping-cart.svg`} /> : null}
           {logined ? (
             <MyPage toggle={toggle}>
               <p>마이페이지</p>

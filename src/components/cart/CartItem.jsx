@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
+import { useNavigate } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { oneOrderState } from '../../store';
 
 import AmountControl from '../common/AmountControl';
 
 import { ColorObject } from '../../constants';
 import { fetcherBody, fetcherAuth } from '../../utils/fetcher';
-import { Link, useNavigate } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
-import { oneOrderState } from '../../Atom';
 
 const CartItem = ({ image, seller, name, price, shippingFee, quantity, setState, cartId, productId, stock, isActive }) => {
   const navigate = useNavigate();

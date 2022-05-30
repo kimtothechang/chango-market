@@ -9,7 +9,7 @@ import OrderForm from '../components/order/OrderForm';
 
 import { BASIC_PAGE_WIDTH } from '../constants';
 import { useSetRecoilState } from 'recoil';
-import { orderKindInfo } from '../Atom';
+import { orderKindInfo } from '../store/common';
 
 const OrderContainer = () => {
   const location = useLocation();
